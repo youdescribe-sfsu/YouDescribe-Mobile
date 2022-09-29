@@ -1,20 +1,22 @@
 import * as React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
+import SearchBar from '../components/SearchBar';
+
 //Screens
-import RecentVideosScreen from './screens/RecentVideosScreen';
+import HomeScreen from './screens/HomeScreen';
 import SearchScreen from './screens/SearchScreen';
 import WishlistScreen from './screens/WishlistScreen';
 import MyDescriptionsScreen from './screens/MyDescriptionsScreen';
 import SettingsScreen from './screens/SettingsScreen';
 
 //Screen Names
-const recentVideosName = 'Recent Videos';
+const homeName = 'Home';
 const searchName = 'Search';
 const wishlistName = 'Wishlist';
 const myDescriptionsName = 'My Descriptions';
@@ -26,13 +28,13 @@ export default function MainContainer() {
   return (
     <NavigationContainer>
         <Tab.Navigator
-            initialRouteName={recentVideosName}
+            initialRouteName={homeName}
             screenOptions={({route}) => ({
                 tabBarIcon: ({ focused, color, size }) => {
                     let iconName;
                     let rn = route.name;
 
-                    if (rn === recentVideosName) {
+                    if (rn === homeName) {
                         iconName = focused ? 'home' : 'home-outline';
                     } else if (rn === searchName) {
                         iconName = focused ? 'search' : 'search-outline';
@@ -53,8 +55,8 @@ export default function MainContainer() {
             })}>
 
             <Tab.Screen
-                name={recentVideosName}
-                component={RecentVideosScreen}
+                name={homeName}
+                component={HomeScreen}
                 options={{ title: 'YouDescribe',
                            tabBarLabel: 'Home',
                            tabBarAccessibilityLabel: 'Recent Videos',
@@ -63,7 +65,7 @@ export default function MainContainer() {
             <Tab.Screen
                 name={searchName}
                 component={SearchScreen}
-                options={{ title: 'Search',
+                options={{ headerTitle: () => <SearchBar></SearchBar>,
                            tabBarLabel: 'Search',
                            tabBarAccessibilityLabel: 'Search Videos',
                         }}
