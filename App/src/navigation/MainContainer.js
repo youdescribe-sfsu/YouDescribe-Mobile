@@ -47,7 +47,9 @@ export default function MainContainer() {
                     return <Ionicons name = {iconName} size = {size} color = {color} />
                 },
                 tabBarStyle: styles.tabBar,
-                tabBarLabelStyle: styles.label
+                tabBarLabelStyle: styles.label,
+                headerStyle: styles.header,
+                headerTitleStyle: styles.headerTitle
             })}>
 
             <Tab.Screen
@@ -109,7 +111,14 @@ const styles = StyleSheet.create({
   },
   tabBar: {
     backgroundColor: '#434344',
-    height: 80,
-    padding: 10
+    height: 80
+  },
+  header: {
+    backgroundColor: '#434344'
+  },
+  headerTitle: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold'
   }
 });
