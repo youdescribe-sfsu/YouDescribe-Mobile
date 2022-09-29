@@ -1,12 +1,19 @@
 import * as React from 'react';
+<<<<<<< HEAD
 import { StyleSheet } from 'react-native';
+=======
+import { StyleSheet, Text, View } from 'react-native';
+>>>>>>> ceef559 (Updated navigation with all 5 screens)
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+<<<<<<< HEAD
 
 import SearchBar from '../components/SearchBar';
+=======
+>>>>>>> ceef559 (Updated navigation with all 5 screens)
 
 //Screens
 import HomeScreen from './screens/HomeScreen';
@@ -49,6 +56,7 @@ export default function MainContainer() {
                     return <Ionicons name = {iconName} size = {size} color = {color} />
                 },
                 tabBarStyle: styles.tabBar,
+<<<<<<< HEAD
                 tabBarLabelStyle: styles.label,
                 headerStyle: styles.header,
                 headerTitleStyle: styles.headerTitle
@@ -57,6 +65,14 @@ export default function MainContainer() {
             <Tab.Screen
                 name={homeName}
                 component={HomeScreen}
+=======
+                tabBarLabelStyle: styles.label
+            })}>
+
+            <Tab.Screen
+                name={recentVideosName}
+                component={RecentVideosScreen}
+>>>>>>> ceef559 (Updated navigation with all 5 screens)
                 options={{ title: 'YouDescribe',
                            tabBarLabel: 'Home',
                            tabBarAccessibilityLabel: 'Recent Videos',
@@ -65,7 +81,11 @@ export default function MainContainer() {
             <Tab.Screen
                 name={searchName}
                 component={SearchScreen}
+<<<<<<< HEAD
                 options={{ headerTitle: () => <SearchBar></SearchBar>,
+=======
+                options={{ title: 'Search',
+>>>>>>> ceef559 (Updated navigation with all 5 screens)
                            tabBarLabel: 'Search',
                            tabBarAccessibilityLabel: 'Search Videos',
                         }}
@@ -113,6 +133,7 @@ const styles = StyleSheet.create({
   },
   tabBar: {
     backgroundColor: '#434344',
+<<<<<<< HEAD
     height: 80
   },
   header: {
@@ -122,5 +143,9 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 20,
     fontWeight: 'bold'
+=======
+    height: 80,
+    padding: 10
+>>>>>>> ceef559 (Updated navigation with all 5 screens)
   }
 });
