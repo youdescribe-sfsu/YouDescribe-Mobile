@@ -1,6 +1,20 @@
 import { View, Text, StyleSheet, Image } from 'react-native';
+import UpVoteButton from './UpVoteButton';
+import DescribeButton from './DescribeButton';
 
 export default function VideoCard(props) {
+
+    let buttons;
+
+    if(props.buttons === 'upvote-describe') {
+        buttons = (
+            <>
+                <UpVoteButton></UpVoteButton>
+                <DescribeButton></DescribeButton>
+            </>
+        );
+    }
+
     return (
         <View style={styles.card}>
             <View style={styles.thumbnail}>
@@ -16,6 +30,9 @@ export default function VideoCard(props) {
                 <Text>{props.video.title}</Text>
                 <Text>{props.video.channel}</Text>
             </View>
+            <View style={styles.videoButtons}>
+                {buttons}
+            </View>
         </View>
     );
 }
@@ -29,6 +46,7 @@ const styles = StyleSheet.create({
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-between',
+      alignItems: 'center',
       borderBottomColor: '#edebeb',
       borderBottomWidth: '2px'
     },
@@ -46,8 +64,18 @@ const styles = StyleSheet.create({
     },
     videoInfo: {
         display: 'flex',
-        width: '60%',
+        width: '30%',
+        height: '90%',
         justifyContent: 'space-between',
         paddingVertical: 10
+    },
+    videoButtons: {
+        display: 'flex',
+        width: '25%',
+        justifyContent: 'space-between',
+        alignItems: 'flex-end',
+        height: '90%',
+        paddingVertical: 5,
+        paddingHorizontal: 10
     }
-  });
+});
