@@ -1,36 +1,7 @@
-import { StyleSheet, View, FlatList } from 'react-native';
-
-import VideoCard from '../../components/VideoCard';
-import { DATA } from '../tmp_data';
+import VideoCardsList from "../../components/VideoCardsList";
 
 export default function WishlistScreen() {
-
-  const renderVideo = ({ item }) => (
-    <VideoCard video={item} buttons="upvote-describe" />
-  );
-
   return (
-    <View style={styles.container}>
-      <FlatList
-        data={DATA}
-        renderItem={renderVideo}
-        keyExtractor={video => video.id}
-        style={styles.videoList}
-      />
-    </View>
+    <VideoCardsList buttons= "upvote-describe"></VideoCardsList>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: 10
-  },
-  videoList: {
-    width: '100%',
-    paddingHorizontal: 5
-  }
-});
