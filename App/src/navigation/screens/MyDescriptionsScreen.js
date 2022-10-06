@@ -1,18 +1,7 @@
-import { StyleSheet, Text, View } from 'react-native';
+import VideoCardsList from "../../components/VideoCardsList";
 
 export default function MyDescriptionsScreen() {
   return (
-    <View style={styles.container}>
-      <Text>My Descriptions Screen</Text>
-    </View>
+    <VideoCardsList buttons= "edit"></VideoCardsList>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

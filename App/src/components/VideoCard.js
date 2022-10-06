@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet, Image } from 'react-native';
 import UpVoteButton from './UpVoteButton';
 import DescribeButton from './DescribeButton';
+import EditButton from './EditButton';
 
 export default function VideoCard(props) {
 
@@ -11,6 +12,14 @@ export default function VideoCard(props) {
             <>
                 <UpVoteButton></UpVoteButton>
                 <DescribeButton></DescribeButton>
+            </>
+        );
+    }
+
+    if(props.buttons === 'edit') {
+        buttons = (
+            <>
+                <EditButton></EditButton>
             </>
         );
     }
