@@ -1,18 +1,7 @@
-import { StyleSheet, Text, View } from 'react-native';
+import VideoCardsList from "../../components/VideoCardsList";
 
 export default function WishlistScreen() {
   return (
-    <View style={styles.container}>
-      <Text>Wishlist Screen</Text>
-    </View>
+    <VideoCardsList buttons= "upvote-describe"></VideoCardsList>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

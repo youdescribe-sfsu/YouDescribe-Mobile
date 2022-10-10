@@ -1,0 +1,90 @@
+import { View, Text, StyleSheet, Image } from 'react-native';
+import UpVoteButton from './UpVoteButton';
+import DescribeButton from './DescribeButton';
+import EditButton from './EditButton';
+
+export default function VideoCard(props) {
+
+    let buttons;
+
+    if(props.buttons === 'upvote-describe') {
+        buttons = (
+            <>
+                <UpVoteButton></UpVoteButton>
+                <DescribeButton></DescribeButton>
+            </>
+        );
+    }
+
+    if(props.buttons === 'edit') {
+        buttons = (
+            <>
+                <EditButton></EditButton>
+            </>
+        );
+    }
+
+    return (
+        <View style={styles.card}>
+            <View style={styles.thumbnail}>
+                <Image
+                    style={styles.thumbnailImage}
+                    resizeMode='cover'
+                    source={{
+                        uri: `${props.video.thumbnail}`
+                    }}
+                />
+            </View>
+            <View style={styles.videoInfo}>
+                <Text>{props.video.title}</Text>
+                <Text>{props.video.channel}</Text>
+            </View>
+            <View style={styles.videoButtons}>
+                {buttons}
+            </View>
+        </View>
+    );
+}
+
+const styles = StyleSheet.create({
+    card: {
+      width: '100%',
+      height: 90,
+      borderRadius: '10px',
+      marginBottom: 5,
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      borderBottomColor: '#edebeb',
+      borderBottomWidth: '2px'
+    },
+    thumbnail: {
+        height: '90%',
+        width: '35%',
+        borderRadius: '10px',
+        backgroundColor: '#000',
+        overflow: 'hidden',
+        marginTop: 2
+    },
+    thumbnailImage: {
+        height: '100%',
+        width: undefined
+    },
+    videoInfo: {
+        display: 'flex',
+        width: '30%',
+        height: '90%',
+        justifyContent: 'space-between',
+        paddingVertical: 10
+    },
+    videoButtons: {
+        display: 'flex',
+        width: '25%',
+        justifyContent: 'space-between',
+        alignItems: 'flex-end',
+        height: '90%',
+        paddingVertical: 5,
+        paddingHorizontal: 10
+    }
+});
