@@ -1,11 +1,13 @@
-import { View, TextInput, Text, StyleSheet } from "react-native";
+import { TextInput, StyleSheet, Keyboard } from "react-native";
 
 export default function SearchBar() {
     return (
         <TextInput
             style={styles.input}
             placeholder="Search Videos"
-            placeholderTextColor="#434344"
+            placeholderTextColor="green"
+            onSubmitEditing={Keyboard.dismiss}
+            onBlur={Keyboard.dismiss}
         />
     );
 }

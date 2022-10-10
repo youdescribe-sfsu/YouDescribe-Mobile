@@ -54,3 +54,58 @@ export const DATA = [
       thumbnail: `https://www.akc.org/wp-content/uploads/2020/07/Golden-Retriever-puppy-standing-outdoors-500x486.jpg`
     },
 ];
+
+export const Recent_Searches = [
+  {
+    id: '1',
+    phrase: 'First Search'
+  },
+  {
+    id: '2',
+    phrase: 'Second Search'
+  },
+  {
+    id: '3',
+    phrase: 'Third Search'
+  },
+  {
+    id: '4',
+    phrase: 'Fourth Search'
+  },
+  {
+    id: '5',
+    phrase: 'Fifth Search'
+  },
+  {
+    id: '6',
+    phrase: 'Sixth Search'
+  },
+  {
+    id: '7',
+    phrase: 'Seventh Search'
+  },
+  {
+    id: '8',
+    phrase: 'Eighth Search'
+  },
+  {
+    id: '9',
+    phrase: 'Ninth Search'
+  },
+  {
+    id: '10',
+    phrase: 'Ninth Search'
+  },
+  {
+    id: '11',
+    phrase: 'Ninth Search'
+  },
+  {
+    id: '12',
+    phrase: 'Ninth Search'
+  },
+  {
+    id: '13',
+    phrase: 'Ninth Search'
+  },
+]
