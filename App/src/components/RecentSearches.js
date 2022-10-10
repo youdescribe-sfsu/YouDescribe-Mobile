@@ -1,6 +1,8 @@
 import { StyleSheet, View, FlatList, Text, Keyboard } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
+// Importing temporary data to create a basic UI component.
+// TODO: Fetch data from API to replace the temporary data.
 import { Recent_Searches } from '../navigation/tmp_data';
 
 export default function RecentSearches() {

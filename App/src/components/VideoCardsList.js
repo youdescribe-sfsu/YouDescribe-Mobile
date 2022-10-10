@@ -1,6 +1,8 @@
 import { StyleSheet, View, FlatList } from 'react-native';
 
 import VideoCard from './VideoCard';
+// Importing temporary data to create a basic UI component.
+// TODO: Fetch data from API to replace the temporary data.
 import { DATA } from '../navigation/tmp_data';
 
 export default function VideoCardsList(props) {
