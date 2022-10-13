@@ -4,7 +4,7 @@ import DescribeButton from './DescribeButton';
 import EditButton from './EditButton';
 
 export default function VideoCard(props) {
-
+    console.log(props.video);
     let buttons;
 
     if(props.buttons === 'upvote-describe') {
