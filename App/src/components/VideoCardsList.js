@@ -2,17 +2,14 @@ import { useState, useEffect } from 'react';
 import { StyleSheet, View, FlatList } from 'react-native';
 
 import VideoCard from './VideoCard';
-// Importing temporary data to create a basic UI component.
-// TODO: Fetch data from API to replace the temporary data.
-// import { DATA } from '../navigation/tmp_data';
-import sampleApi from '../api/sampleApi';
+import videosApi from '../api/videosApi';
 
 export default function VideoCardsList(props) {
 
   const [videoData, setVideoData] = useState([]);
 
   const getVideos = async () => {
-    const allVideos = await sampleApi.getAllVideos();
+    const allVideos = await videosApi.getVideosData();
     console.log(allVideos);
     setVideoData(allVideos);
   }
