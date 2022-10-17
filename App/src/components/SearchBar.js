@@ -5,7 +5,6 @@ export default function SearchBar() {
         <TextInput
             style={styles.input}
             placeholder="Search Videos"
-            placeholderTextColor="green"
             onSubmitEditing={Keyboard.dismiss}
             onBlur={Keyboard.dismiss}
         />

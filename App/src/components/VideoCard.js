@@ -33,6 +33,9 @@ export default function VideoCard(props) {
                         uri: `${props.video.thumbnail}`
                     }}
                 />
+                <View style={styles.thumbnailDuration}>
+                    <Text style={{color: '#fff', fontSize: 12}}>{props.video.duration}</Text>
+                </View>
             </View>
             <View style={styles.videoInfo}>
                 <Text style={styles.videoTitle}>{props.video.title}</Text>
@@ -64,11 +67,21 @@ const styles = StyleSheet.create({
         borderRadius: '10px',
         backgroundColor: '#000',
         overflow: 'hidden',
-        marginTop: 2
+        marginTop: 2,
+        position: 'relative'
     },
     thumbnailImage: {
         height: '100%',
         width: undefined
+    },
+    thumbnailDuration: {
+        position: 'absolute',
+        bottom: 4,
+        right: 4,
+        backgroundColor: 'rgba(0,0,0,0.8)',
+        color: '#fff',
+        padding: 2,
+        borderRadius: '3px'
     },
     videoInfo: {
         display: 'flex',
