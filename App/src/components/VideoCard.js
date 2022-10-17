@@ -4,7 +4,6 @@ import DescribeButton from './DescribeButton';
 import EditButton from './EditButton';
 
 export default function VideoCard(props) {
-    console.log(props.video);
     let buttons;
 
     if(props.buttons === 'upvote-describe') {
@@ -36,7 +35,7 @@ export default function VideoCard(props) {
                 />
             </View>
             <View style={styles.videoInfo}>
-                <Text>{props.video.title}</Text>
+                <Text style={styles.videoTitle}>{props.video.title}</Text>
                 <Text>{props.video.channel}</Text>
             </View>
             <View style={styles.videoButtons}>
@@ -73,18 +72,24 @@ const styles = StyleSheet.create({
     },
     videoInfo: {
         display: 'flex',
-        width: '30%',
+        width: '35%',
         height: '90%',
         justifyContent: 'space-between',
-        paddingVertical: 10
+        paddingTop: 10,
+        paddingBottom: 5
     },
     videoButtons: {
         display: 'flex',
-        width: '25%',
+        width: '20%',
         justifyContent: 'space-between',
         alignItems: 'flex-end',
         height: '90%',
         paddingVertical: 5,
         paddingHorizontal: 10
+    },
+    videoTitle: {
+        fontWeight: 'bold',
+        flex: 1,
+        flexShrink: 1
     }
 });
