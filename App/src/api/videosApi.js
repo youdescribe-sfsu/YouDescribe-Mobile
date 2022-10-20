@@ -35,9 +35,23 @@ const convertSecondsToCardFormat = (timeInSeconds) => {
 }
 
 // Function to fetch all videos
-const getAllVideos = async () => {
+const getHomeVideos = async () => {
     try {
         const response = await apiClient.get('/videos');
+        if(response.data){
+            return response.data.result;
+        }
+        return []
+    } catch (error) {
+        console.log('Error: ', error);
+        return null;
+    }
+}
+
+// Function to fetch wishlist videos
+const getWishlistVideos = async () => {
+    try {
+        const response = await apiClient.get('/wishlist');
         if(response.data){
             return response.data.result;
         }
@@ -51,19 +65,25 @@ const getAllVideos = async () => {
 // Function to generate a comma-separated string of youtubeIds of all the given videos.
 const generateYoutubeIdsString = (videos) => {
     let youtubeIds = [];
-    // Only getting youtubeIds of the first 20 videos for now.
-    // TODO: Change 20 to videos.length
-    for (let i = 0; i < 20; i++) {
+    // Only getting youtubeIds of the first 15 videos for now.
+    // TODO: Change 15 to videos.length
+    for (let i = 0; i < 15; i++) {
         const video = videos[i];
+        console.log(video);
         youtubeIds.push(video.youtube_id);
     }
     return youtubeIds.join(',');
 }
 
 // Function to fetch title, channel title, and thumbnail url of all videos.
-const getVideosData = async () => {
+const getVideosData = async (page) => {
     try {
-        const videos = await getAllVideos();
+        let videos;
+        if(page === 'home'){
+            videos = await getHomeVideos();
+        }else if(page === 'wishlist'){
+            videos = await getWishlistVideos();
+        }
         const youtubeIds = generateYoutubeIdsString(videos);
         const response = await apiClient.get(`/videos/getyoutubedatafromcache?youtubeids=${youtubeIds}&key=home`);
 
@@ -95,6 +115,5 @@ const getVideosData = async () => {
 }
 
 export default {
-    getAllVideos,
     getVideosData
 }

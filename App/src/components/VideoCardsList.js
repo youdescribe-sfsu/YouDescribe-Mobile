@@ -9,7 +9,12 @@ export default function VideoCardsList(props) {
   const [videoData, setVideoData] = useState([]);
 
   const getVideos = async () => {
-    const allVideos = await videosApi.getVideosData();
+    let allVideos;
+    if(props.buttons === 'upvote-describe'){
+      allVideos = await videosApi.getVideosData('wishlist');
+    }else{
+      allVideos = await videosApi.getVideosData('home');
+    }
     console.log(allVideos);
     setVideoData(allVideos);
   }
