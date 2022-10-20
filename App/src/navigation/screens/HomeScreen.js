@@ -1,7 +1,7 @@
 import VideoCardsList from "../../components/VideoCardsList";
 
-export default function HomeScreen() {
+export default function HomeScreen({ navigation }) {
   return (
-    <VideoCardsList></VideoCardsList>
+    <VideoCardsList navigation={navigation} ></VideoCardsList>
   );
 }

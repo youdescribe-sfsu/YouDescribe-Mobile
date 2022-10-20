@@ -15,8 +15,10 @@ import WishlistScreen from './screens/WishlistScreen';
 import MyDescriptionsScreen from './screens/MyDescriptionsScreen';
 import SettingsScreen from './screens/SettingsScreen';
 
+import HomeScreenNavigator from './HomeScreenNavigator';
+
 //Screen Names
-const homeName = 'Home';
+const homeName = 'Home Navigator';
 const searchName = 'Search';
 const wishlistName = 'Wishlist';
 const myDescriptionsName = 'My Descriptions';
@@ -56,7 +58,7 @@ export default function MainContainer() {
 
             <Tab.Screen
                 name={homeName}
-                component={HomeScreen}
+                component={HomeScreenNavigator}
                 options={{ title: 'YouDescribe',
                            tabBarLabel: 'Home',
                            tabBarAccessibilityLabel: 'Recent Videos',

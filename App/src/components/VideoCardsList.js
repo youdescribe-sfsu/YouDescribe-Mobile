@@ -24,7 +24,7 @@ export default function VideoCardsList(props) {
   },[]);
 
   const renderVideo = ({ item }) => (
-    <VideoCard video={item} buttons={props.buttons} />
+    <VideoCard video={item} buttons={props.buttons} navigation={props.navigation} />
   );
 
   return (
