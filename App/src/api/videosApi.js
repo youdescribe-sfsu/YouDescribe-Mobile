@@ -42,7 +42,8 @@ const getVideosData = async () => {
                     channel: snippet.channelTitle,
                     thumbnail: snippet.thumbnails.medium.url,
                     duration: duration,
-                    videoId: items[i].id
+                    videoId: items[i].id,
+                    publishedAt: snippet.publishedAt,
                 }
                 videoData.push(obj);
             }

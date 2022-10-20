@@ -1,9 +1,9 @@
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import YoutubePlayer from 'react-native-youtube-iframe';
 
 export default function VideoPlayer(props) {
     return(
-        <View>
+        <View style={styles.container}>
             <YoutubePlayer 
                 height={300}
                 play={false}
@@ -12,3 +12,9 @@ export default function VideoPlayer(props) {
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        height: 300
+    }
+});
