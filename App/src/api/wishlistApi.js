@@ -6,10 +6,10 @@ import
   generateYoutubeIdsString
 } from '../shared/helperFunctions';
 
-// Function to fetch all videos
-const getHomeVideos = async () => {
+// Function to fetch wishlist videos
+const getWishlistVideos = async () => {
     try {
-        const response = await apiClient.get('/videos');
+        const response = await apiClient.get('/wishlist');
         if(response.data){
             return response.data.result;
         }
@@ -23,7 +23,7 @@ const getHomeVideos = async () => {
 // Function to fetch title, channel title, and thumbnail url of all videos.
 const getVideosData = async () => {
     try {
-        const videos = await getHomeVideos();
+        const videos = await getWishlistVideos();
         const youtubeIds = generateYoutubeIdsString(videos);
         const response = await apiClient.get(`/videos/getyoutubedatafromcache?youtubeids=${youtubeIds}&key=home`);
 

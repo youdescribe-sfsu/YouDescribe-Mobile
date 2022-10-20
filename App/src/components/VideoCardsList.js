@@ -3,6 +3,7 @@ import { StyleSheet, View, FlatList } from 'react-native';
 
 import VideoCard from './VideoCard';
 import videosApi from '../api/videosApi';
+import wishlistApi from '../api/wishlistApi';
 
 export default function VideoCardsList(props) {
 
@@ -11,11 +12,10 @@ export default function VideoCardsList(props) {
   const getVideos = async () => {
     let allVideos;
     if(props.buttons === 'upvote-describe'){
-      allVideos = await videosApi.getVideosData('wishlist');
+      allVideos = await wishlistApi.getVideosData();
     }else{
-      allVideos = await videosApi.getVideosData('home');
+      allVideos = await videosApi.getVideosData();
     }
-    console.log(allVideos);
     setVideoData(allVideos);
   }
 
