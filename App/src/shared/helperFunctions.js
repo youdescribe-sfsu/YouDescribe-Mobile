@@ -30,6 +30,33 @@ export const convertSecondsToCardFormat = (timeInSeconds) => {
     return timeInSeconds < 3600 ? `${minutes}:${seconds}` : `${hours}:${minutes}:${seconds}`;
 }
 
+export const convertISO8601ToDate = (input) => {
+    let d = new Date(input);
+    d = String(d).split(' ').slice(1, 4);
+    d[1] += ',';
+    return d.join(' ');
+}
+
+export const convertViewsToCardFormat = (views) => {
+    if (views >= 1000000000) views = `${(views / 1000000000).toFixed(1)}B views`;
+    else if (views >= 1000000) views = `${(views / 1000000).toFixed(1)}M views`;
+    else if (views >= 1000) views = `${(views / 1000).toFixed(0)}K views`;
+    else if (views === 1) views = `${views} view`;
+    else views = `${views} views`;
+  
+    return views;
+}
+  
+export const convertLikesToCardFormat = (likes) => {
+    if (likes >= 1000000000) likes = `${(likes / 1000000000).toFixed(1)}B`;
+    else if (likes >= 1000000) likes = `${(likes / 1000000).toFixed(1)}M`;
+    else if (likes >= 1000) likes = `${(likes / 1000).toFixed(0)}K`;
+    else if (likes === 1) likes = `${likes}`;
+    else likes = `${likes}`;
+
+    return likes;
+}
+
 // Function to generate a comma-separated string of youtubeIds of all the given videos.
 export const generateYoutubeIdsString = (videos) => {
     let youtubeIds = [];

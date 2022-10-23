@@ -3,7 +3,10 @@ import { apiClient } from './client';
 import
 { convertISO8601ToSeconds,
   convertSecondsToCardFormat,
-  generateYoutubeIdsString
+  generateYoutubeIdsString,
+  convertISO8601ToDate,
+  convertLikesToCardFormat,
+  convertViewsToCardFormat
 } from '../shared/helperFunctions';
 
 // Function to fetch wishlist videos
@@ -43,7 +46,9 @@ const getVideosData = async () => {
                     thumbnail: snippet.thumbnails.medium.url,
                     duration: duration,
                     videoId: items[i].id,
-                    publishedAt: snippet.publishedAt,
+                    publishedAt: convertISO8601ToDate(snippet.publishedAt),
+                    likes: convertLikesToCardFormat(items[i].statistics.likeCount),
+                    views: convertViewsToCardFormat(items[i].statistics.viewCount)
                 }
                 videoData.push(obj);
             }

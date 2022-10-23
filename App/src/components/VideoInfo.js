@@ -1,20 +1,19 @@
 import { View, Text, StyleSheet } from 'react-native';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 export default function VideoInfo(props) {
-
-    const publishedAt = new Date(props.video.publishedAt);
-    const date = publishedAt.getDate();
-    const month = publishedAt.getMonth();
-    const year = publishedAt.getFullYear();
 
     return(
         <View style={styles.container}>
             <Text style={styles.videoTitle}>{props.video.title}</Text>
             <View style={styles.channelDate}>
                 <Text style={styles.channelName}>{props.video.channel}</Text>
-                <Text>Published on {month}-{date}-{year}</Text>
+                <Text>Published on {props.video.publishedAt}</Text>
             </View>
-            <Text></Text>
+            <View style={styles.viewsLikes}>
+                <Text><FontAwesome5 name = 'eye' size = {14} /> {props.video.views}</Text>
+                <Text><FontAwesome5 name = 'thumbs-up' size = {14} /> {props.video.likes}</Text>
+            </View>
         </View>
     );
 }
@@ -22,11 +21,13 @@ export default function VideoInfo(props) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 10
+        paddingVertical: 10,
+        paddingHorizontal: 20
     },
     videoTitle: {
         fontWeight: 'bold',
-        fontSize: 16
+        fontSize: 18,
+        marginVertical: 6
     },
     channelDate: {
         display: 'flex',
@@ -37,6 +38,12 @@ const styles = StyleSheet.create({
         borderBottomColor: '#c3b6b6'
     },
     channelName: {
-        fontWeight: '500'
+        fontWeight: '600'
+    },
+    viewsLikes: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingVertical: 10
     }
 });
