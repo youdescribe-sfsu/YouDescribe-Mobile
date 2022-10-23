@@ -11,9 +11,10 @@ export default function VideoInfo(props) {
         <View style={styles.container}>
             <Text style={styles.videoTitle}>{props.video.title}</Text>
             <View style={styles.channelDate}>
-                <Text>{props.video.channel}</Text>
+                <Text style={styles.channelName}>{props.video.channel}</Text>
                 <Text>Published on {month}-{date}-{year}</Text>
             </View>
+            <Text></Text>
         </View>
     );
 }
@@ -28,9 +29,14 @@ const styles = StyleSheet.create({
         fontSize: 16
     },
     channelDate: {
-        flex: 1,
+        display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingVertical: 10
+        paddingVertical: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#c3b6b6'
+    },
+    channelName: {
+        fontWeight: '500'
     }
 });
