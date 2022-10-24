@@ -20,7 +20,7 @@ export default function VideoInfo(props) {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        display: 'flex',
         paddingVertical: 10,
         paddingHorizontal: 20
     },

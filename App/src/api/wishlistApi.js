@@ -40,7 +40,7 @@ const getVideosData = async () => {
                     convertISO8601ToSeconds(items[i].contentDetails.duration)
                 );
                 const obj = {
-                    id: i,
+                    id: videos[i]._id,
                     title: snippet.title,
                     channel: snippet.channelTitle,
                     thumbnail: snippet.thumbnails.medium.url,

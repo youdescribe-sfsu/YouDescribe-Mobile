@@ -40,7 +40,7 @@ const getVideosData = async () => {
                     convertISO8601ToSeconds(items[i].contentDetails.duration)
                 );
                 const obj = {
-                    id: i,
+                    id: videos[i]._id,
                     title: snippet.title,
                     channel: snippet.channelTitle,
                     thumbnail: snippet.thumbnails.medium.url,
@@ -61,6 +61,21 @@ const getVideosData = async () => {
     }
 }
 
+const getAudioDescriptions = async (videoId) => {
+    try {
+        const response = await apiClient.get(`/videos/${videoId}`);
+        if(response.data){
+            const video = response.data.result;
+            return video.audio_descriptions;
+        }
+        return [];
+    } catch (error) {
+        console.log('Error: ', error);
+        return null;
+    }
+}
+
 export default {
-    getVideosData
+    getVideosData,
+    getAudioDescriptions
 }
