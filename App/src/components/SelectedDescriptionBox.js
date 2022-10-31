@@ -19,11 +19,11 @@ export default function SelectedDescriptionBox(props) {
                     <View style={styles.nameRating}>
                         <Text style={styles.describerName}>{describer.name}</Text>
                         <View style={styles.rating}>
-                            <FontAwesome5 name='star' size={24} color={'#787070'} solid/>
-                            <FontAwesome5 name='star' size={24} color={'#787070'} solid/>
-                            <FontAwesome5 name='star' size={24} color={'#787070'} solid/>
-                            <FontAwesome5 name='star' size={24} color={'#787070'} solid/>
-                            <FontAwesome5 name='star' size={24} color={'#787070'} solid/>
+                            <FontAwesome5 name='star' size={18} color={'#787070'} solid/>
+                            <FontAwesome5 name='star' size={18} color={'#787070'} solid/>
+                            <FontAwesome5 name='star' size={18} color={'#787070'} solid/>
+                            <FontAwesome5 name='star' size={18} color={'#787070'} solid/>
+                            <FontAwesome5 name='star' size={18} color={'#787070'} solid/>
                         </View>
                     </View>
                 </View>
@@ -45,14 +45,14 @@ const styles = StyleSheet.create({
         display: 'flex',
         borderWidth: 2,
         marginHorizontal: 20,
-        marginVertical: 10,
+        marginBottom: 10,
         padding: 10,
         borderColor: '#c3b6b6'
     },
     describerInfo: {
         display: 'flex',
         flexDirection: 'row',
-        marginVertical: 20,
+        marginVertical: 5,
         marginLeft: 15,
         alignItems: 'center'
     },
@@ -60,18 +60,18 @@ const styles = StyleSheet.create({
         display: 'flex',
         justifyContent: 'space-between',
         marginLeft: 15,
-        paddingVertical: 11,
+        paddingVertical: 14,
         height: 75
     },
     rating: {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        width: 180
+        width: 120
     },
     describerImage: {
-        width: 75,
-        height: 75,
+        width: 60,
+        height: 60,
         borderRadius: '50%'
     },
     describerName:{
@@ -82,8 +82,8 @@ const styles = StyleSheet.create({
         alignSelf: 'center'
     },
     button: {
-        width: 240,
-        height: 40,
+        width: 200,
+        height: 36,
         backgroundColor: '#384488',
         display: 'flex',
         justifyContent: 'center',
@@ -93,6 +93,6 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#fff',
         fontWeight: 'bold',
-        fontSize: '18px'
+        fontSize: '16px'
     }
 });

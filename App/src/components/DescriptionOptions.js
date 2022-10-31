@@ -25,8 +25,8 @@ const styles = StyleSheet.create({
         marginVertical: 10
     },
     button: {
-        width: 240,
-        height: 40,
+        width: 200,
+        height: 36,
         backgroundColor: '#384488',
         display: 'flex',
         justifyContent: 'center',
@@ -37,6 +37,6 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#fff',
         fontWeight: 'bold',
-        fontSize: '18px'
+        fontSize: '16px'
     }
 });

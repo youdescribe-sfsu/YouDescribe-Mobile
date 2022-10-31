@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     },
     sliderContainer: {
         backgroundColor: '#000',
-        paddingHorizontal: 40
+        paddingHorizontal: 20
     },
     sliderContainerView: {
         display: 'flex',
