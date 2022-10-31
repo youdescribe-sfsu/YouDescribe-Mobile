@@ -2,11 +2,7 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 export default function SelectedDescriptionBox(props) {
-    let describer;
-    if(props.ad.length > 0){
-        console.log(props.ad);
-        describer = props.ad[0].user;
-    }
+    let describer = props.user;
     if(describer){
         return (
             <View style={styles.container}>
