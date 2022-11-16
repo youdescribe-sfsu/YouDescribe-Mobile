@@ -1,5 +1,7 @@
-import { Text, View, StyleSheet } from "react-native";
-import { useState, useEffect } from "react";
+import { Text, View, StyleSheet, useWindowDimensions, RecyclerViewBackedScrollViewComponent } from "react-native";
+import { useState, useEffect, useRef } from "react";
+import YoutubePlayer from 'react-native-youtube-iframe';
+import { Audio } from 'expo-av';
 
 import { audioClipsUploadsPath } from "../../api/client";
 
@@ -11,19 +13,35 @@ import DescriptionOptions from "../../components/DescriptionOptions";
 import videosApi from "../../api/videosApi";
 
 export default function VideoScreen({ route }) {
+    console.log("Rerendered!!");
+    const deviceWidth = useWindowDimensions().width;
     const video = route.params.video;
+    let videoDurationInSeconds = null;
+    const videoPlayerRef = useRef();
     const [audioDescriptions, setAudioDescriptions] = useState([]);
     const [audioDescriptionsIds, setAudioDescriptionsIds] = useState([]);
     const [audioDescriptionsIdsUsers, setAudioDescriptionsIdsUsers] = useState({});
     const [audioDescriptionsIdsAudioClips, setAudioDescriptionsIdsAudioClips] = useState({});
     const [selectedAudioDescriptionId, setSelectedAudioDescriptionId] = useState("");
+    const [audioClips, setAudioClips] = useState([]);
+    const [currentClip, setCurrentClip] = useState(null);
+    const [videoPlayer, setVideoPlayer] = useState(null);
+    const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+    const [currentVideoProgress, setCurrentVideoProgress] = useState(null);
+    const [videoVolume, setVideoVolume] = useState(null);
+    const [oldVolume, setOldVolume] = useState(null);
+    const [playheadPosition, setPlayheadPosition] = useState(null);
+    const [progressWatcher, setProgressWatcher] = useState(null);
+    const [audioClipsSource, setAudioClipsSource] = useState([]);
 
     const getAudioDescriptions = async () => {
+        console.log("getAudioDescriptions");
         const audioDescriptions = await videosApi.getAudioDescriptions(video.videoId);
         setAudioDescriptions(audioDescriptions);
     }
 
     const parseAudioDescriptions = () => {
+        console.log("parseAudioDescriptions");
         if (audioDescriptions) {
             const adIds = [];
             const adIdsUsers = {};
@@ -39,8 +57,9 @@ export default function VideoScreen({ route }) {
                 adIdsAudioClips[ad._id] = [];
                 if (ad.audio_clips) {
                     ad.audio_clips.forEach((audioClip) => {
-                        audioClip.url = `${audioClipsUploadsPath}${audioClip.file_path}/${audioClip.file_name}`;
-                        adIdsAudioClips[ad._id].d
+                        // audioClip.url = `${audioClipsUploadsPath}${audioClip.file_path}/${audioClip.file_name}`;
+                        audioClip.url = `../../assets/Y6Hfp3HXCSc/${audioClip.file_name}`;
+                        adIdsAudioClips[ad._id].push(audioClip);
                     });
                 }
                 }
@@ -52,6 +71,7 @@ export default function VideoScreen({ route }) {
     }
 
     const getHighestRatingADId = () => {
+        console.log("getHighestRatingADId");
         let selectedId = null;
         if(audioDescriptions){
             selectedId = audioDescriptionsIds[0];
@@ -70,6 +90,7 @@ export default function VideoScreen({ route }) {
     }
 
     const setAudioDescriptionActive = () => {
+        console.log("setAudioDescritionActive");
         if(!selectedAudioDescriptionId){
             let adId = getHighestRatingADId();
             if(audioDescriptionsIds.length > 0 && audioDescriptionsIds.indexOf(adId) === -1){
@@ -79,7 +100,232 @@ export default function VideoScreen({ route }) {
         }
     }
 
+    const preLoadAudioClips = () => {
+        console.log("preLoadAudioClips");
+        let clips = [];
+        if(audioDescriptionsIdsAudioClips
+           && selectedAudioDescriptionId
+           && audioDescriptionsIdsAudioClips[selectedAudioDescriptionId]
+        ){
+            clips = audioDescriptionsIdsAudioClips[selectedAudioDescriptionId];
+        }
+        // console.log("Audio Clips: ",clips);
+        // clips.forEach((clip,idx) => {console.log("Clip",idx,"  ",clip.file_name)});
+        // TODO : Preload Audio Clips Here.
+        setAudioClips(clips);
+    }
+
+    // const initVideoPlayer = () => {
+    //     if(videoPlayer === null){
+    //         const player = (
+    //             <YoutubePlayer
+    //                 ref={videoPlayerRef}
+    //                 height={deviceWidth * 9 / 16} // Setting the height to 9/16th of the device's width as the video player's aspect ratio is 16:9
+    //                 play={isVideoPlaying}
+    //                 videoId={video.videoId}
+    //                 onChangeState={onVPStateChange}
+    //             />
+    //         );
+    //         setVideoPlayer(player);
+    //     }
+    // }
+
+    const onVPStateChange = (event) => {
+        console.log("onVPStateChange");
+        switch(event){
+            case "playing":
+                setIsVideoPlaying(true);
+                if(videoDurationInSeconds === null){
+                    videoPlayerRef.current?.getDuration().then(duration => {
+                        videoDurationInSeconds = duration;
+                    });
+                }
+                if(currentClip && currentClip.playbackType === "extended"){
+                    setIsVideoPlaying(false);
+                    if (currentClip.audio.playing()){
+                        pauseAudioClips();
+                    } else {
+                        currentClip.audio.play();
+                    }
+                } else {
+                    checkSeek();
+                    startProgressWatcher();
+                }
+                break;
+            case "paused":
+                stopProgressWatcher();
+                setIsVideoPlaying(false);
+                if(currentClip && currentClip.playbackType !== "extended"){
+                    pauseAudioClips();
+                }
+                break;
+            case "buffering":
+                if(currentClip && currentClip.playbackType !== "extended"){
+                    currentClip.audio.stop();
+                    currentClip = null;
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    const checkSeek = () => {
+        console.log("checkSeek");
+        if(selectedAudioDescriptionId && currentClip){
+            currentClip.audio.stop();
+            currentClip = none;
+        }
+        let videoTimestamp;
+        videoPlayerRef.current?.getCurrentTime().then(currentTime => {
+            videoTimestamp = currentTime;
+        });
+        //round to 2 nearest dec
+        videoTimestamp = Math.round(videoTimestamp * 100) / 100;
+        for(let i = 0; i < audioClips.length; i++){
+            const clip = audioClips[i];
+            if(clip.playback_type === "inline"){
+                let startTime = Math.round(clip.start_time * 100) / 100;
+                let duration = Math.round(clip.duration * 100) / 100;
+                if(startTime > videoTimestamp){
+                    break;
+                }
+                if(startTime < videoTimestamp && videoTimestamp < startTime + duration){
+                    const diff = videoTimestamp - startTime;
+                    playAudioClip(clip, diff);
+                    break;
+                }
+            }
+        }
+    }
+
+    const startProgressWatcher = () => {
+        console.log("startProgressWatcher");
+        if(selectedAudioDescriptionId){
+            const interval = 10;
+            if(progressWatcher){
+                stopProgressWatcher();
+            }
+            const progressWatcher = setInterval(async () => {
+                if(videoPlayerRef){
+                    const currentTime = await videoPlayerRef.current.getCurrentTime();
+                    // setCurrentVideoProgress(currentTime);
+                    // const volume = await videoPlayerRef.current.getVolume();
+                    // setVideoVolume(volume);
+                    // setPlayheadPosition( 756 * (currentVideoProgress / videoDurationInSeconds) );
+    
+                    // TODO: Audio Ducking goes here.
+    
+                    const currentVideoProgressFloor = Math.round(currentTime * 100) / 100;
+                    console.log("CurrentVideoProgressFloor ", currentVideoProgressFloor);
+                    audioClips.forEach((audioClip, idx) => {
+                        // console.log("Clip ", idx, " Start time ", audioClip.start_time);
+                        if(Math.round(audioClip.start_time * 100) / 100 === currentVideoProgressFloor){
+                            if(!currentClip){
+                                videoPlayerRef.current?.getVolume().then(volume => {
+                                    setOldVolume(volume);
+                                });
+                                playAudioClip(audioClip, idx);
+                            }
+                        }
+                    });
+                }
+            }, interval);
+            setProgressWatcher(progressWatcher);
+        }
+    }
+
+    const stopProgressWatcher = () => {
+        console.log("stopProgressWatcher");
+        if(progressWatcher){
+            clearInterval(progressWatcher);
+            setProgressWatcher(null);
+        }
+    }
+
+    const playAudioClip = async (audioClip, idx, timestamp = null) => {
+        console.log("playAudioClip");
+        if(currentClip === null){
+            // const source = { uri: audioClip.url };
+            // const source = require(audioClip.url);
+            // const source = require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ebfd6934e8a1ea9f84297.wav");
+            const source = audioClipsSource[idx];
+            const initialStatus = {
+                shouldPlay: false,
+                isMuted: false
+            };
+            console.log("Audio Clip Source ", source);
+            const { sound } = await Audio.Sound.createAsync(source, initialStatus, handleClipUpdates);
+            // const { sound } = await Audio.Sound.createAsync(require(audioClip.url), initialStatus, handleClipUpdates);
+            // const { sound } = Audio.Sound.createAsync( require(`${audioClip.url}`) );
+            setCurrentClip({
+                audio: sound,
+                playbackType: audioClip.playback_type,
+                duration: audioClip.duration,
+                start_time: audioClip.start_time
+            });
+            if(timestamp){
+                await sound.setPositionAsync(timestamp);
+            }
+            await sound.playAsync();
+        }
+    }
+
+    const pauseAudioClips = async () => {
+        console.log("pauseAudioClips");
+        if(currentClip){
+            if(currentClip.playbackType === 'inline'){
+                await currentClip.audio.stopAsync();
+                setCurrentClip(null);
+            } else {
+                await currentClip.audio.pauseAsync();
+            }
+        }
+    }
+
+    const handleClipUpdates = (status) => {
+        console.log("handleClipUpdates");
+        console.log("Audio Clip Status ", status);
+        if(status.isLoaded){
+            if(status.isPlaying){
+                if(currentClip && currentClip.playbackType === 'extended'){
+                    setIsVideoPlaying(false);
+                }
+            }
+            else if(status.didJustFinish){
+                if(currentClip && currentClip.playbackType === 'extended'){
+                    setIsVideoPlaying(true);
+                } else {
+                    // TODO: Reverse Audio Ducking goes here.
+                }
+                setCurrentClip(null);
+            }
+        } else {
+            if(status.error) {
+                console.log("Error while playing audio clip: ", status.error);
+            }
+        }
+    }
+
     useEffect(() => {
+        const source = [
+            require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ebfd6934e8a1ea9f84297.wav"),
+            require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ebff944d9f31eaf8e3614.wav"),
+            require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec070934e8a1ea9f8429f.wav"),
+            require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec12644d9f31eaf8e361a.wav"),
+            require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec14c934e8a1ea9f842a1.wav"),
+            require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec19e934e8a1ea9f842a2.wav"),
+            require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec1d844d9f31eaf8e361c.wav"),
+            require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec227934e8a1ea9f842a3.wav"),
+            require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec36844d9f31eaf8e361d.wav"),
+            require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec3ff934e8a1ea9f842a7.wav"),
+            require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec4ab934e8a1ea9f842a8.wav"),
+            require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec4ff934e8a1ea9f842aa.wav"),
+            require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec59944d9f31eaf8e361f.wav"),
+            require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec5c2934e8a1ea9f842ab.wav"),
+            require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec5fa44d9f31eaf8e3622.wav")
+        ];
+        setAudioClipsSource(source);
         getAudioDescriptions();
     }, []);
 
@@ -91,9 +337,25 @@ export default function VideoScreen({ route }) {
         setAudioDescriptionActive();
     }, [audioDescriptionsIds]);
 
+    useEffect(() => {
+        preLoadAudioClips();
+    }, [selectedAudioDescriptionId]);
+
+    // useEffect(() => {
+    //     initVideoPlayer();
+    // }, [audioClips, isVideoPlaying]);
+
     return (
         <View style={styles.container}>
-            <VideoPlayer video={video}/>
+            {/* <VideoPlayer video={video}/> */}
+            {/* {videoPlayer} */}
+            <YoutubePlayer
+                ref={videoPlayerRef}
+                height={deviceWidth * 9 / 16} // Setting the height to 9/16th of the device's width as the video player's aspect ratio is 16:9
+                play={isVideoPlaying}
+                videoId={video.videoId}
+                onChangeState={onVPStateChange}
+            />
             <VideoInfo video={video}/>
             <SelectedDescriptionBox user={audioDescriptionsIdsUsers[selectedAudioDescriptionId]} />
             <DescriptionOptions />
@@ -107,12 +369,3 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start'
     }
 });
-
-
-
-// let audioDescribers = [];
-// if(audioDescriptions){
-//     audioDescriptions.forEach((description) => {
-//         audioDescribers.push(<Text key={description._id}>{description.user.name}</Text>);
-//     });
-// }
