@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 export const apiClient = axios.create({
-    baseURL: 'http://localhost:8080/v1'
+    // baseURL: 'http://localhost:8080/v1'
+    baseURL: 'https://dev-api.youdescribe.org/v1'
 });
 
-export const audioClipsUploadsPath = 'http://localhost:8080/audio-descriptions-files';
+export const audioClipsUploadsPath = 'https://dev-api.youdescribe.org/audio-descriptions-files';

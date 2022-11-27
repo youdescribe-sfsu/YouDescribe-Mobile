@@ -3,6 +3,8 @@ import { useState, useEffect, useRef } from "react";
 import YoutubePlayer from 'react-native-youtube-iframe';
 import { Audio } from 'expo-av';
 
+import axios from 'axios';
+
 import { audioClipsUploadsPath } from "../../api/client";
 
 import VideoPlayer from '../../components/VideoPlayer';
@@ -38,6 +40,7 @@ export default function VideoScreen({ route }) {
     const getAudioDescriptions = async () => {
         console.log("getAudioDescriptions");
         const audioDescriptions = await videosApi.getAudioDescriptions(video.videoId);
+        console.log(video);
         setAudioDescriptions(audioDescriptions);
     }
 
@@ -58,13 +61,15 @@ export default function VideoScreen({ route }) {
                 adIdsAudioClips[ad._id] = [];
                 if (ad.audio_clips) {
                     ad.audio_clips.forEach((audioClip) => {
-                        // audioClip.url = `${audioClipsUploadsPath}${audioClip.file_path}/${audioClip.file_name}`;
-                        audioClip.url = `../../assets/Y6Hfp3HXCSc/${audioClip.file_name}`;
+                        audioClip.url = `${audioClipsUploadsPath}${audioClip.file_path}/${audioClip.file_name}`;
+                        // audioClip.url = `../../assets/Y6Hfp3HXCSc/${audioClip.file_name}`;
                         adIdsAudioClips[ad._id].push(audioClip);
                     });
                 }
                 }
             });
+            console.log(adIds);
+            console.log(adIdsAudioClips);
             setAudioDescriptionsIdsUsers(adIdsUsers);
             setAudioDescriptionsIdsAudioClips(adIdsAudioClips);
             setAudioDescriptionsIds(adIds);
@@ -113,6 +118,16 @@ export default function VideoScreen({ route }) {
         // console.log("Audio Clips: ",clips);
         // clips.forEach((clip,idx) => {console.log("Clip",idx,"  ",clip.file_name)});
         // TODO : Preload Audio Clips Here.
+        clips.forEach(async (clip) => {
+            try {
+                console.log('Url Before: ', clip.url);
+                // await axios.get(clip.url);
+                await fetch(clip.url);
+                console.log('Url After: ', clip.url);
+            } catch (error) {
+                console.log("Error preloading audio clips: ", error);
+            }
+        });
         setAudioClips(clips);
     }
 
@@ -264,10 +279,10 @@ export default function VideoScreen({ route }) {
                 duration: audioClip.duration,
                 start_time: audioClip.start_time
             };
-            // const source = { uri: audioClip.url };
+            const source = { uri: audioClip.url };
             // const source = require(audioClip.url);
             // const source = require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ebfd6934e8a1ea9f84297.wav");
-            const source = audioClipsSource[idx];
+            // const source = audioClipsSource[idx];
             const initialStatus = {
                 shouldPlay: false,
                 isMuted: false
@@ -283,6 +298,7 @@ export default function VideoScreen({ route }) {
             //     start_time: audioClip.start_time
             // });
             currentClipRef.current.audio = sound;
+            console.log(currentClipRef.current);
             if(timestamp){
                 await sound.setPositionAsync(timestamp);
             }
@@ -303,17 +319,18 @@ export default function VideoScreen({ route }) {
     }
 
     const handleClipUpdates = (status) => {
-        // console.log("handleClipUpdates");
+        console.log("handleClipUpdates");
         // console.log("Audio Clip Status ", status);
         if(status.isLoaded){
             if(status.isPlaying){
                 if(currentClipRef.current && currentClipRef.current.playbackType === 'extended'){
-                    setIsVideoPlaying(false);
+                    // setIsVideoPlaying(false);
                 }
-            }
-            else if(status.didJustFinish){
+            } else if(status.isBuffering){
+                console.log("Audio Clip Buffering");
+            } else if(status.didJustFinish){
                 if(currentClipRef.current && currentClipRef.current.playbackType === 'extended'){
-                    setIsVideoPlaying(true);
+                    // setIsVideoPlaying(true);
                 } else {
                     // TODO: Reverse Audio Ducking goes here.
                 }
@@ -327,24 +344,24 @@ export default function VideoScreen({ route }) {
     }
 
     useEffect(() => {
-        const source = [
-            require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ebfd6934e8a1ea9f84297.wav"),
-            require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ebff944d9f31eaf8e3614.wav"),
-            require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec070934e8a1ea9f8429f.wav"),
-            require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec12644d9f31eaf8e361a.wav"),
-            require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec14c934e8a1ea9f842a1.wav"),
-            require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec19e934e8a1ea9f842a2.wav"),
-            require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec1d844d9f31eaf8e361c.wav"),
-            require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec227934e8a1ea9f842a3.wav"),
-            require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec36844d9f31eaf8e361d.wav"),
-            require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec3ff934e8a1ea9f842a7.wav"),
-            require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec4ab934e8a1ea9f842a8.wav"),
-            require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec4ff934e8a1ea9f842aa.wav"),
-            require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec59944d9f31eaf8e361f.wav"),
-            require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec5c2934e8a1ea9f842ab.wav"),
-            require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec5fa44d9f31eaf8e3622.wav")
-        ];
-        setAudioClipsSource(source);
+        // const source = [
+        //     require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ebfd6934e8a1ea9f84297.wav"),
+        //     require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ebff944d9f31eaf8e3614.wav"),
+        //     require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec070934e8a1ea9f8429f.wav"),
+        //     require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec12644d9f31eaf8e361a.wav"),
+        //     require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec14c934e8a1ea9f842a1.wav"),
+        //     require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec19e934e8a1ea9f842a2.wav"),
+        //     require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec1d844d9f31eaf8e361c.wav"),
+        //     require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec227934e8a1ea9f842a3.wav"),
+        //     require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec36844d9f31eaf8e361d.wav"),
+        //     require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec3ff934e8a1ea9f842a7.wav"),
+        //     require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec4ab934e8a1ea9f842a8.wav"),
+        //     require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec4ff934e8a1ea9f842aa.wav"),
+        //     require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec59944d9f31eaf8e361f.wav"),
+        //     require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec5c2934e8a1ea9f842ab.wav"),
+        //     require("../../assets/Y6Hfp3HXCSc/Y6Hfp3HXCSc_636ec5fa44d9f31eaf8e3622.wav")
+        // ];
+        // setAudioClipsSource(source);
         getAudioDescriptions();
     }, []);
 
