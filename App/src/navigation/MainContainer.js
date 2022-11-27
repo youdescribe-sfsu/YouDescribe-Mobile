@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { StyleSheet } from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
@@ -6,12 +5,12 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
+import { SearchProvider } from '../contexts/SearchContext';
+
 import SearchBar from '../components/SearchBar';
 
 //Screens
-import HomeScreen from './screens/HomeScreen';
 import SearchScreen from './screens/SearchScreen';
-import WishlistScreen from './screens/WishlistScreen';
 import MyDescriptionsScreen from './screens/MyDescriptionsScreen';
 import SettingsScreen from './screens/SettingsScreen';
 
@@ -30,6 +29,7 @@ const Tab = createBottomTabNavigator();
 export default function MainContainer() {
   return (
     <NavigationContainer>
+      <SearchProvider>
         <Tab.Navigator
             initialRouteName={homeName}
             screenOptions={({route}) => ({
@@ -68,7 +68,7 @@ export default function MainContainer() {
             <Tab.Screen
                 name={searchName}
                 component={SearchScreen}
-                options={{ headerTitle: () => <SearchBar></SearchBar>,
+                options={{ headerTitle: () => <SearchBar />,
                            tabBarLabel: 'Search',
                            tabBarAccessibilityLabel: 'Search Videos',
                         }}
@@ -97,8 +97,8 @@ export default function MainContainer() {
                            tabBarAccessibilityLabel: 'Help and Settings',
                         }}
             />
-
         </Tab.Navigator>
+      </SearchProvider>
     </NavigationContainer>
   );
 }
