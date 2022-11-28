@@ -1,20 +1,14 @@
 import { apiClient } from './client';
-
-import
-{ convertISO8601ToSeconds,
-  convertSecondsToCardFormat,
-  generateYoutubeIdsString,
-  convertISO8601ToDate,
-  convertLikesToCardFormat,
-  convertViewsToCardFormat
-} from '../shared/helperFunctions';
+import videosApi from './videosApi';
 
 // Function to fetch wishlist videos
 const getWishlistVideos = async () => {
     try {
         const response = await apiClient.get('/wishlist');
         if(response.data){
-            return response.data.result;
+            const videos = response.data.result;
+            const videosData = await videosApi.getVideosData(videos);
+            return videosData;
         }
         return []
     } catch (error) {
@@ -23,44 +17,6 @@ const getWishlistVideos = async () => {
     }
 }
 
-// Function to fetch title, channel title, and thumbnail url of all videos.
-const getVideosData = async () => {
-    try {
-        const videos = await getWishlistVideos();
-        const youtubeIds = generateYoutubeIdsString(videos);
-        const response = await apiClient.get(`/videos/getyoutubedatafromcache?youtubeids=${youtubeIds}&key=home`);
-
-        if(response.data){
-            const result = JSON.parse(response.data.result);
-            const items = result.items;
-            const videoData = [];
-            for (let i = 0; i < items.length; i++) {
-                const snippet = items[i].snippet;
-                const duration = convertSecondsToCardFormat(
-                    convertISO8601ToSeconds(items[i].contentDetails.duration)
-                );
-                const obj = {
-                    id: videos[i]._id,
-                    title: snippet.title,
-                    channel: snippet.channelTitle,
-                    thumbnail: snippet.thumbnails.medium.url,
-                    duration: duration,
-                    videoId: items[i].id,
-                    publishedAt: convertISO8601ToDate(snippet.publishedAt),
-                    likes: convertLikesToCardFormat(items[i].statistics.likeCount),
-                    views: convertViewsToCardFormat(items[i].statistics.viewCount)
-                }
-                videoData.push(obj);
-            }
-            return videoData;
-        }
-        return [];
-    } catch (error) {
-        console.log('Error: ', error);
-        return null;
-    }
-}
-
 export default {
-    getVideosData
+    getWishlistVideos
 }
