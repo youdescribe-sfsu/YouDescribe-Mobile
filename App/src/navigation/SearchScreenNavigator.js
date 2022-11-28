@@ -3,12 +3,12 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 
-import WishlistScreen from './screens/WishlistScreen';
+import SearchScreen from './screens/SearchScreen';
 import VideoScreen from './screens/VideoScreen';
 
 const Stack = createNativeStackNavigator();
 
-export default function WishlistScreenNavigator({ navigation, route }) {
+export default function SearchScreenNavigator({ navigation, route }) {
 
     React.useLayoutEffect(() => {
         const routeName = getFocusedRouteNameFromRoute(route);
@@ -24,10 +24,10 @@ export default function WishlistScreenNavigator({ navigation, route }) {
     }, [navigation, route]);
 
     return (
-        <Stack.Navigator initialRouteName={'Wishlist'}>
+        <Stack.Navigator initialRouteName={'Search'}>
             <Stack.Screen 
-                name={'Wishlist'}
-                component={WishlistScreen}
+                name={'Search'}
+                component={SearchScreen}
                 options={{
                     headerShown: false
                 }}
@@ -37,7 +37,7 @@ export default function WishlistScreenNavigator({ navigation, route }) {
                 component={VideoScreen}
                 options={{
                     title: 'Video Player',
-                    headerBackTitle: 'Wishlist'
+                    headerBackTitle: 'YouDescribe'
                 }}
             />
         </Stack.Navigator>

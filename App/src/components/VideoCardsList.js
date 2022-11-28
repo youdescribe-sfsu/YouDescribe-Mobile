@@ -9,7 +9,7 @@ export default function VideoCardsList(props) {
   return (
     <View style={styles.container}>
       <FlatList
-        data={props.videos}
+        data={props.videos || []}
         renderItem={renderVideo}
         keyExtractor={video => video.id}
         style={styles.videoList}

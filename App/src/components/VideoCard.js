@@ -24,15 +24,9 @@ export default function VideoCard(props) {
     }
 
     const openVideo = () => {
-        if(props.buttons === 'upvote-describe'){
-            props.navigation.navigate('Wishlist Video', {
-                video: props.video
-            });
-        } else{
-            props.navigation.navigate('Video', {
-                video: props.video
-            });
-        }
+        props.navigation.navigate('Video', {
+            video: props.video
+        });
     }
 
     return (

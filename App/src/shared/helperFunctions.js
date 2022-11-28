@@ -64,7 +64,9 @@ export const generateYoutubeIdsString = (videos) => {
     // TODO: Change 15 to videos.length
     for (let i = 0; i < 15; i++) {
         const video = videos[i];
-        youtubeIds.push(video.youtube_id);
+        if(video){
+            youtubeIds.push(video.youtube_id);
+        }
     }
     return youtubeIds.join(',');
 }

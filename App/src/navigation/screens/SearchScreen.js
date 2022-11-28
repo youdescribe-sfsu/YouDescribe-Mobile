@@ -3,15 +3,13 @@ import SearchResults from '../../components/SearchResults';
 
 import { useSearch } from '../../contexts/SearchContext';
 
-export default function SearchScreen() {
+export default function SearchScreen({navigation}) {
   const searchTerm = useSearch();
 
   if(!searchTerm){
-    console.log("RecentSearches");
     return ( <RecentSearches></RecentSearches> );
   }
-  console.log("Search Results");
   return (
-    <SearchResults></SearchResults>
+    <SearchResults navigation={navigation}></SearchResults>
   );
 }

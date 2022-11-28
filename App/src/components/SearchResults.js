@@ -1,21 +1,23 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { useState, useEffect } from 'react';
+import VideoCardsList from './VideoCardsList';
+
+import videosApi from '../api/videosApi';
 
 import { useSearch } from '../contexts/SearchContext';
 
-export default function SearchResults() {
+export default function SearchResults({navigation}) {
     const searchTerm = useSearch();
+    const [videos, setVideos] = useState([]);
+    const getVideos = async() => {
+        const videos = await videosApi.getSearchedVideos(searchTerm);
+        setVideos(videos);
+    }
+
+    useEffect(() => {
+        getVideos();
+    },[searchTerm]);
+
     return (
-        <View style={styles.container}>
-          <Text>{searchTerm}</Text>
-        </View>
+        <VideoCardsList videos={videos} navigation={navigation} ></VideoCardsList>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#fff',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-});

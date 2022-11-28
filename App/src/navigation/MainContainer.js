@@ -10,16 +10,16 @@ import { SearchProvider } from '../contexts/SearchContext';
 import SearchBar from '../components/SearchBar';
 
 //Screens
-import SearchScreen from './screens/SearchScreen';
 import MyDescriptionsScreen from './screens/MyDescriptionsScreen';
 import SettingsScreen from './screens/SettingsScreen';
 
 import HomeScreenNavigator from './HomeScreenNavigator';
 import WishlistScreenNavigator from './WishlistScreenNavigator';
+import SearchScreenNavigator from './SearchScreenNavigator';
 
 //Screen Names
 const homeName = 'Home Navigator';
-const searchName = 'Search';
+const searchName = 'Search Navigator';
 const wishlistName = 'Wishlist Navigator';
 const myDescriptionsName = 'My Descriptions';
 const settingsName = 'Settings';
@@ -67,7 +67,7 @@ export default function MainContainer() {
             />
             <Tab.Screen
                 name={searchName}
-                component={SearchScreen}
+                component={SearchScreenNavigator}
                 options={{ headerTitle: () => <SearchBar />,
                            tabBarLabel: 'Search',
                            tabBarAccessibilityLabel: 'Search Videos',
