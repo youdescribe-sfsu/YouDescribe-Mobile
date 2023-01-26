@@ -1,23 +1,51 @@
-import { useState, useEffect } from 'react';
-import VideoCardsList from './VideoCardsList';
+import { StyleSheet } from 'react-native';
 
-import videosApi from '../api/videosApi';
+import { NavigationContainer } from '@react-navigation/native';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
-import { useSearch } from '../contexts/SearchContext';
+import DescribedSearchResults from './DescribedSearchResults';
+import WishlistSearchResults from './WishlistSearchResults';
+import NonDescribedSearchResults from './NonDescribedSearchResults';
 
-export default function SearchResults({navigation}) {
-    const searchTerm = useSearch();
-    const [videos, setVideos] = useState([]);
-    const getVideos = async() => {
-        const videos = await videosApi.getSearchedVideos(searchTerm);
-        setVideos(videos);
+const Tab = createMaterialTopTabNavigator();
+
+export default function SearchResults({stackNavigation}) {
+    const DescribedSearchResultsComponent = () => {
+        return (
+            <DescribedSearchResults stackNavigation={stackNavigation}/>
+        );
     }
 
-    useEffect(() => {
-        getVideos();
-    },[searchTerm]);
+    const WishlistSearchResultsComponent = () => {
+        return (
+            <WishlistSearchResults stackNavigation={stackNavigation}/>
+        );
+    }
+
+    const NonDescribedSearchResultsComponent = () => {
+        return (
+            <NonDescribedSearchResults stackNavigation={stackNavigation}/>
+        );
+    }
 
     return (
-        <VideoCardsList videos={videos} navigation={navigation} ></VideoCardsList>
+        <NavigationContainer
+            independent={true}
+        >
+            <Tab.Navigator>
+                <Tab.Screen 
+                    name='Described'
+                    component={DescribedSearchResultsComponent}
+                />
+                <Tab.Screen 
+                    name='Wishlist'
+                    component={WishlistSearchResultsComponent}
+                />
+                <Tab.Screen 
+                    name='Non-Described'
+                    component={NonDescribedSearchResultsComponent}
+                />
+            </Tab.Navigator>
+        </NavigationContainer>
     );
 }

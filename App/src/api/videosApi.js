@@ -44,9 +44,9 @@ const getSearchedVideos = async (searchTerm, page=1) => {
 // Function to fetch title, channel title, and thumbnail url of all videos.
 const getVideosData = async (videos) => {
     try {
+        console.log("getVideosData videos length: ", videos.length);
         const youtubeIds = generateYoutubeIdsString(videos);
         const response = await apiClient.get(`/videos/getyoutubedatafromcache?youtubeids=${youtubeIds}&key=home`);
-
         if(response.data){
             const result = JSON.parse(response.data.result);
             const items = result.items;

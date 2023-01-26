@@ -63,8 +63,8 @@ export default function VideoScreen({ route }) {
                     }
                 }
             });
-            console.log(adIds);
-            console.log(adIdsAudioClips);
+            // console.log(adIds);
+            // console.log(adIdsAudioClips);
             setAudioDescriptionsIdsUsers(adIdsUsers);
             setAudioDescriptionsIdsAudioClips(adIdsAudioClips);
             setAudioDescriptionsIds(adIds);
@@ -110,15 +110,22 @@ export default function VideoScreen({ route }) {
         ){
             clips = audioDescriptionsIdsAudioClips[selectedAudioDescriptionId];
         }
-        clips.forEach(async (clip) => {
-            const source = { uri: clip.url };
-            const initialStatus = {
-                shouldPlay: false,
-                isMuted: false
-            };
-            const { sound } = await Audio.Sound.createAsync(source, initialStatus, handleClipUpdates);
-            clip.sound = sound;
+        console.log("Number of Audio Clips: ",clips.length);
+        clips.forEach(async (clip, idx) => {
+            console.log("Source URL: ", clip.url);
+            try {
+                const source = { uri: clip.url };
+                const initialStatus = {
+                    shouldPlay: false,
+                    isMuted: false
+                };
+                const { sound } = await Audio.Sound.createAsync(source, initialStatus, handleClipUpdates);
+                clip.sound = sound;
+            } catch (e) {
+                console.error(e);
+            }
         });
+        console.log("Setting audio clips");
         setAudioClips(clips);
     }
 
@@ -207,7 +214,15 @@ export default function VideoScreen({ route }) {
     
                     // TODO: Audio Ducking goes here.
                     const currentVideoProgressFloor = parseFloat(currentTime);
-                    console.log("CurrentVideoProgressFloor ", currentVideoProgressFloor);
+                    // Skipping an audio clip that is stuck in the buffering phase
+                    if(currentClipRef.current &&
+                       currentVideoProgressFloor > parseFloat(currentClipRef.current.start_time + currentClipRef.current.duration)){
+                        await currentClipRef.current.audio.stopAsync();
+                        await currentClipRef.current.audio.unloadAsync();
+                        currentClipRef.current = null;
+                        console.log("Audio Clip Skipped.");
+                    }
+                    // console.log("CurrentVideoProgressFloor ", currentVideoProgressFloor);
                     audioClips.forEach((audioClip, idx) => {
                         if(currentVideoProgressFloor >= parseFloat(parseFloat(audioClip.start_time) - 0.07) &&
                            currentVideoProgressFloor <= parseFloat(parseFloat(audioClip.start_time) + 0.07)){
@@ -235,6 +250,8 @@ export default function VideoScreen({ route }) {
 
     const playAudioClip = async (audioClip, idx, timestamp = null) => {
         console.log("playAudioClip");
+        console.log("Audio Clip ID: ",audioClip._id);
+        console.log("Audio Clip Duration: ", audioClip.duration);
         if(currentClipRef.current === null){
             console.log("Index: ", idx);
             currentClipRef.current = {
@@ -243,7 +260,7 @@ export default function VideoScreen({ route }) {
                 duration: audioClip.duration,
                 start_time: audioClip.start_time
             };
-            console.log(currentClipRef.current);
+            // console.log(currentClipRef.current);
             if(timestamp){
                 await audioClip.sound.setPositionAsync(timestamp);
             }
@@ -263,12 +280,12 @@ export default function VideoScreen({ route }) {
         }
     }
 
-    const handleClipUpdates = (status) => {
-        console.log("handleClipUpdates");
+    const handleClipUpdates = async (status) => {
+        // console.log("handleClipUpdates");
         if(status.isLoaded){
             if(status.isPlaying){
-                console.log("Is Playing");
-                console.log(status.positionMillis);
+                console.log("Audio Clip is Playing");
+                console.log("Audio Clip current timestamp: ",status.positionMillis/1000);
                 // if(currentClipRef.current && currentClipRef.current.playbackType === 'extended'){
                 //     setIsVideoPlaying(false);
                 // }
@@ -281,6 +298,7 @@ export default function VideoScreen({ route }) {
                 // } else {
                 //     // TODO: Reverse Audio Ducking goes here.
                 // }
+                // await currentClipRef.current.audio.unloadAsync();
                 currentClipRef.current = null;
             }
         } else {

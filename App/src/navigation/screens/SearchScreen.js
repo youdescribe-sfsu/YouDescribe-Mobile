@@ -10,6 +10,6 @@ export default function SearchScreen({navigation}) {
     return ( <RecentSearches></RecentSearches> );
   }
   return (
-    <SearchResults navigation={navigation}></SearchResults>
+    <SearchResults stackNavigation={navigation}></SearchResults>
   );
 }
