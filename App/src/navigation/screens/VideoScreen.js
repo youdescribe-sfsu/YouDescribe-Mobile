@@ -112,7 +112,6 @@ export default function VideoScreen({ route }) {
         }
         console.log("Number of Audio Clips: ",clips.length);
         clips.forEach(async (clip, idx) => {
-            console.log("Source URL: ", clip.url);
             try {
                 const source = { uri: clip.url };
                 const initialStatus = {
@@ -140,6 +139,7 @@ export default function VideoScreen({ route }) {
                     });
                 }
                 if(currentClipRef.current && currentClipRef.current.playbackType === "extended"){
+                    console.log("Extended AC! Pause Video.");
                     setIsVideoPlaying(false);
                     if (currentClipRef.current.audio.playing()){
                         pauseAudioClips();
@@ -250,8 +250,10 @@ export default function VideoScreen({ route }) {
 
     const playAudioClip = async (audioClip, idx, timestamp = null) => {
         console.log("playAudioClip");
+        // console.log("Audio Clip: ", audioClip);
         console.log("Audio Clip ID: ",audioClip._id);
         console.log("Audio Clip Duration: ", audioClip.duration);
+        console.log("Audio Clip Start Time: ", audioClip.start_time);
         if(currentClipRef.current === null){
             console.log("Index: ", idx);
             currentClipRef.current = {
@@ -263,6 +265,9 @@ export default function VideoScreen({ route }) {
             // console.log(currentClipRef.current);
             if(timestamp){
                 await audioClip.sound.setPositionAsync(timestamp);
+            }
+            if(audioClip.playback_type === "extended"){
+                setIsVideoPlaying(false);
             }
             await audioClip.sound.playAsync();
         }
@@ -293,12 +298,12 @@ export default function VideoScreen({ route }) {
                 console.log("Audio Clip Buffering");
             } else if(status.didJustFinish){
                 console.log("Finished Playing");
-                // if(currentClipRef.current && currentClipRef.current.playbackType === 'extended'){
-                //     setIsVideoPlaying(true);
-                // } else {
-                //     // TODO: Reverse Audio Ducking goes here.
-                // }
-                // await currentClipRef.current.audio.unloadAsync();
+                if(currentClipRef.current && currentClipRef.current.playbackType === 'extended'){
+                    setIsVideoPlaying(true);
+                } else {
+                    // TODO: Reverse Audio Ducking goes here.
+                }
+                await currentClipRef.current.audio.unloadAsync();
                 currentClipRef.current = null;
             }
         } else {
@@ -323,6 +328,11 @@ export default function VideoScreen({ route }) {
     useEffect(() => {
         preLoadAudioClips();
     }, [selectedAudioDescriptionId]);
+
+    useEffect(() => {
+        console.log("isVideoPlaying Changed!");
+        console.log("isVideoPlaying: ", isVideoPlaying);
+    }, [isVideoPlaying]);
 
     return (
         <View style={styles.container}>
