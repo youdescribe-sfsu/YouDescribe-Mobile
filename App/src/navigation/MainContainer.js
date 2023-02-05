@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
@@ -6,6 +7,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import { SearchProvider } from '../contexts/SearchContext';
+import { useUserUpdate } from '../contexts/UserContext';
 
 import SearchBar from '../components/SearchBar';
 
@@ -26,12 +28,21 @@ const settingsName = 'Settings';
 
 const Tab = createBottomTabNavigator();
 
-export default function MainContainer() {
+export default function MainContainer({userInfo}) {
+
+  const updateUser = useUserUpdate();
+
+  useEffect(() => {
+    if(userInfo){
+      updateUser(userInfo);
+    }
+  },[]);
+
   return (
     <NavigationContainer>
       <SearchProvider>
         <Tab.Navigator
-            initialRouteName={settingsName}
+            initialRouteName={homeName}
             screenOptions={({route}) => ({
                 tabBarIcon: ({ focused, color, size }) => {
                     let iconName;
