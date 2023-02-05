@@ -1,12 +1,18 @@
 import { StyleSheet, Text, View, Button, Image } from 'react-native';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SplashScreen from 'expo-splash-screen';
+
+// Keep the splash screen visible while we fetch resources
+SplashScreen.preventAutoHideAsync();
 
 WebBrowser.maybeCompleteAuthSession();
 
 export default function SettingsScreen() {
 
+  const [appIsReady, setAppIsReady] = useState(false);
   const [accessToken, setAccessToken] = useState(null);
   const [user, setUser] = useState(null);
 
@@ -17,12 +23,17 @@ export default function SettingsScreen() {
   });
 
   const fetchUserInfo = async () => {
-    let userInfoResponse = await fetch("https://www.googleapis.com/userinfo/v2/me", {
-      headers: { Authorization: `Bearer ${accessToken}` }
-    });
-    const userInfo = await userInfoResponse.json();
-    console.log(userInfo);
-    setUser(userInfo);
+    try {
+      let userInfoResponse = await fetch("https://www.googleapis.com/userinfo/v2/me", {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      });
+      const userInfo = await userInfoResponse.json();
+      console.log(userInfo);
+      await AsyncStorage.setItem("authCredentials", JSON.stringify(userInfo));
+      setUser(userInfo);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   const ShowUserInfo = () => {
@@ -47,8 +58,36 @@ export default function SettingsScreen() {
     }
   }, [response, accessToken]);
 
+  useEffect(() => {
+    async function prepare() {
+      try {
+        const userInfo = await AsyncStorage.getItem("authCredentials");
+        if(userInfo){
+          setUser(JSON.parse(userInfo));
+        }
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        // Tell the application to render
+        setAppIsReady(true);
+      }
+    }
+
+    prepare();
+  }, []);
+
+  const onLayoutRootView = useCallback(async () => {
+    if (appIsReady) {
+      await SplashScreen.hideAsync();
+    }
+  }, [appIsReady]);
+
+  if (!appIsReady) {
+    return null;
+  }
+
   return (
-    <View style={styles.container}>
+    <View style={styles.container} onLayout={onLayoutRootView}>
       {user && <ShowUserInfo />}
       {user === null && 
         <>
