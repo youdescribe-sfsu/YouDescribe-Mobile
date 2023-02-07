@@ -1,10 +1,13 @@
-import { StyleSheet, Text, View, Button, Image } from 'react-native';
-import { useState, useEffect, useCallback } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
+import { useState, useEffect } from 'react';
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { getUser, useUserUpdate } from '../../contexts/UserContext';
+
+import UserInfo from '../../components/UserInfo';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -13,7 +16,6 @@ export default function SettingsScreen() {
   const user = getUser();
   const updateUser = useUserUpdate();
   const [accessToken, setAccessToken] = useState(null);
-  // const [rerender, setRerender] = useState(false);
 
   const [request, response, promptAsync] = Google.useAuthRequest({
     expoClientId: '3158679793-cd09i4qersgl0o0mdab1tfm7lqe9kg8q.apps.googleusercontent.com',
@@ -28,7 +30,6 @@ export default function SettingsScreen() {
       });
       let userInfo = await userInfoResponse.json();
       userInfo = JSON.stringify(userInfo);
-      // console.log(userInfo);
       await AsyncStorage.setItem("authCredentials", userInfo);
       updateUser(userInfo);
     } catch (error) {
@@ -36,24 +37,48 @@ export default function SettingsScreen() {
     }
   }
 
-  const logoutUser = async () => {
-    try {
-      await AsyncStorage.removeItem("authCredentials");
-      updateUser(null);
-    } catch (error) {
-      console.log(error);
-    }
+  const loginUser = () => {
+    promptAsync({useProxy: true});
   }
 
-  const ShowUserInfo = () => {
-    if(user){
-      return(
-        <View>
-          <Image source={{uri: user.picture}} style={{width: 100, height: 100, borderRadius: 50}}/>
-          <Text>{user.name}</Text>
+  const logoutUser = async (promptLogin) => {
+    Alert.alert(
+      'Confirm Sign Out',
+      'Are you sure you want to sign out from this account?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => {return null;},
+          style: 'cancel'
+        },
+        {
+          text: 'Sign Out',
+          onPress: async () => {
+            try {
+              await AsyncStorage.removeItem("authCredentials");
+              updateUser(null);
+              if(promptLogin){
+                loginUser();
+              }
+            } catch (error) {
+              console.log(error);
+            }
+          },
+          style: 'destructive'
+        }
+      ]
+    );
+  }
+
+  const LogoutButton = () => {
+    return(
+      <TouchableOpacity onPress={() => logoutUser(false)}>
+        <View style={styles.logoutBtn}>
+          <Ionicons name = 'log-out-outline' size = '28' color = '#db411a' />
+          <Text style={styles.logoutBtnText}>Sign Out</Text>
         </View>
-      );
-    }
+      </TouchableOpacity>
+    );
   }
 
   useEffect(() => {
@@ -65,34 +90,10 @@ export default function SettingsScreen() {
     }
   }, [response, accessToken]);
 
-  // useEffect(() => {
-  //   setRerender(!rerender);
-  // }, [user]);
-
-  if(user){
-    return(
-      <View style={styles.container} >
-        <ShowUserInfo />
-        <Button 
-          title='Logout'
-          onPress={() => {
-            logoutUser();
-          }}
-        />
-      </View>
-    );
-  }
-  
   return(
     <View style={styles.container} >
-      <Text>Settings Screen</Text>
-      <Button
-        disabled={!request}
-        title="Login"
-        onPress={() => {
-          promptAsync({ useProxy: true });
-        }}
-      />
+      <UserInfo loginUser={loginUser} logoutUser={logoutUser}/>
+      {user && <LogoutButton />}
     </View>
   );
 }
@@ -101,7 +102,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between'
   },
+  logoutBtn: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#dcdcdc',
+    paddingVertical: 10,
+    marginBottom: 0
+  },
+  logoutBtnText: {
+    fontSize: 18,
+    color: '#db411a',
+    marginLeft: 15
+  }
 });

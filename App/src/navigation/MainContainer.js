@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Image } from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -7,7 +7,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import { SearchProvider } from '../contexts/SearchContext';
-import { useUserUpdate } from '../contexts/UserContext';
+import { useUserUpdate, getUser } from '../contexts/UserContext';
 
 import SearchBar from '../components/SearchBar';
 
@@ -24,13 +24,14 @@ const homeName = 'Home Navigator';
 const searchName = 'Search Navigator';
 const wishlistName = 'Wishlist Navigator';
 const myDescriptionsName = 'My Descriptions';
-const settingsName = 'Settings';
+const accountName = 'Account';
 
 const Tab = createBottomTabNavigator();
 
 export default function MainContainer({userInfo}) {
 
   const updateUser = useUserUpdate();
+  const user = getUser();
 
   useEffect(() => {
     if(userInfo){
@@ -56,8 +57,19 @@ export default function MainContainer({userInfo}) {
                         iconName = focused ? 'heart' : 'heart-outline';
                     }else if (rn === myDescriptionsName) {
                         return <FontAwesome5 name = 'audio-description' size = {size} color = {color} />
-                    } else if (rn === settingsName) {
-                        iconName = focused ? 'settings' : 'settings-outline';
+                    } else if (rn === accountName && !user) {
+                        iconName = focused ? 'person-circle' : 'person-circle-outline';
+                    } else if(rn === accountName && user) {
+                        if(focused){
+                          return <Image
+                                    source={{uri: user.picture}}
+                                    style={{width: size, height: size, borderRadius: 50, borderWidth: 2, borderColor: color}}
+                                  />
+                        }
+                        return <Image
+                                  source={{uri: user.picture}}
+                                  style={{width: size, height: size, borderRadius: 50}}
+                                />
                     }
 
                     return <Ionicons name = {iconName} size = {size} color = {color} />
@@ -101,11 +113,11 @@ export default function MainContainer({userInfo}) {
                         }}
             />
             <Tab.Screen
-                name={settingsName}
+                name={accountName}
                 component={SettingsScreen}
-                options={{ title: 'Settings',
-                           tabBarLabel: 'Settings',
-                           tabBarAccessibilityLabel: 'Help and Settings',
+                options={{ title: 'Account',
+                           tabBarLabel: 'Account',
+                           tabBarAccessibilityLabel: 'Account, Help and Settings',
                         }}
             />
         </Tab.Navigator>
