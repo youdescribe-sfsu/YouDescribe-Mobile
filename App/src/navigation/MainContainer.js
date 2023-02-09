@@ -13,11 +13,11 @@ import SearchBar from '../components/SearchBar';
 
 //Screens
 import MyDescriptionsScreen from './screens/MyDescriptionsScreen';
-import SettingsScreen from './screens/SettingsScreen';
 
 import HomeScreenNavigator from './HomeScreenNavigator';
 import WishlistScreenNavigator from './WishlistScreenNavigator';
 import SearchScreenNavigator from './SearchScreenNavigator';
+import AccountScreenNavigator from './AccountScreenNavigator';
 
 //Screen Names
 const homeName = 'Home Navigator';
@@ -114,7 +114,7 @@ export default function MainContainer({userInfo}) {
             />
             <Tab.Screen
                 name={accountName}
-                component={SettingsScreen}
+                component={AccountScreenNavigator}
                 options={{ title: 'Account',
                            tabBarLabel: 'Account',
                            tabBarAccessibilityLabel: 'Account, Help and Settings',

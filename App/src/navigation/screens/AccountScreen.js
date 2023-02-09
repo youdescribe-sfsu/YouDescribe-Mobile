@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Alert, Button } from 'react-native';
 import { useState, useEffect } from 'react';
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
@@ -11,7 +11,7 @@ import UserInfo from '../../components/UserInfo';
 
 WebBrowser.maybeCompleteAuthSession();
 
-export default function SettingsScreen() {
+export default function AccountScreen({navigation}) {
 
   const user = getUser();
   const updateUser = useUserUpdate();
@@ -93,6 +93,20 @@ export default function SettingsScreen() {
   return(
     <View style={styles.container} >
       <UserInfo loginUser={loginUser} logoutUser={logoutUser}/>
+      <View>
+        <Button 
+          title='Help And Support'
+          onPress={() => navigation.navigate('Help And Support')}
+        />
+        <Button 
+          title='Credits'
+          onPress={() => navigation.navigate('Credits')}
+        />
+        <Button 
+          title='Contact Us'
+          onPress={() => navigation.navigate('Contact Us')}
+        />
+      </View>
       {user && <LogoutButton />}
     </View>
   );
