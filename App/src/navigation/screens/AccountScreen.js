@@ -15,21 +15,42 @@ export default function AccountScreen({navigation}) {
 
   const user = getUser();
   const updateUser = useUserUpdate();
-  const [accessToken, setAccessToken] = useState(null);
+  // const [accessToken, setAccessToken] = useState(null);
+  const [idToken, setIdToken] = useState(null);
 
   const [request, response, promptAsync] = Google.useAuthRequest({
-    expoClientId: '3158679793-cd09i4qersgl0o0mdab1tfm7lqe9kg8q.apps.googleusercontent.com',
+    responseType: "id_token",
+    // expoClientId: '3158679793-cd09i4qersgl0o0mdab1tfm7lqe9kg8q.apps.googleusercontent.com',
+    expoClientId: '1061361249208-9799kv6172rjgmk4gad077639dfrck82.apps.googleusercontent.com',
     iosClientId: '3158679793-l94a8t4asb14ar54ud9a93164sulh56l.apps.googleusercontent.com',
     androidClientId: '3158679793-rlr3itj0rt0j36eqt2tcucaslvl19oob.apps.googleusercontent.com'
   });
 
+  // const fetchUserInfo = async () => {
+  //   try {
+  //     let userInfoResponse = await fetch("https://www.googleapis.com/userinfo/v2/me", {
+  //       headers: { Authorization: `Bearer ${accessToken}` }
+  //     });
+  //     let userInfo = await userInfoResponse.json();
+  //     console.log(userInfo);
+  //     userInfo = JSON.stringify(userInfo);
+  //     // await AsyncStorage.setItem("authCredentials", userInfo);
+  //     updateUser(userInfo);
+  //   } catch (error) {
+  //     console.log(error);
+  //     Alert.alert('Error', error);
+  //   }
+  // }
+
   const fetchUserInfo = async () => {
     try {
-      let userInfoResponse = await fetch("https://www.googleapis.com/userinfo/v2/me", {
-        headers: { Authorization: `Bearer ${accessToken}` }
+      const userInfoResponse = await fetch('https://api.youdescribe.org/v1/auth', {
+        method: 'POST',
+        body: JSON.stringify({ googleToken: idToken }),
+        headers: { 'Content-Type': 'application/json' }
       });
       let userInfo = await userInfoResponse.json();
-      userInfo = JSON.stringify(userInfo);
+      userInfo = JSON.stringify(userInfo.result);
       await AsyncStorage.setItem("authCredentials", userInfo);
       updateUser(userInfo);
     } catch (error) {
@@ -83,31 +104,38 @@ export default function AccountScreen({navigation}) {
 
   useEffect(() => {
     if (response?.type === 'success') {
-      setAccessToken(response.authentication.accessToken);
-      if(accessToken){
+      // setAccessToken(response.authentication.accessToken);
+      setIdToken(response.params.id_token);
+      if(idToken){
         fetchUserInfo();
       }
     }
-  }, [response, accessToken]);
+  }, [response, idToken]);
 
   return(
     <View style={styles.container} >
       <UserInfo loginUser={loginUser} logoutUser={logoutUser}/>
-      <View>
-        <Button 
-          title='Help And Support'
-          onPress={() => navigation.navigate('Help And Support')}
-        />
-        <Button 
-          title='Credits'
-          onPress={() => navigation.navigate('Credits')}
-        />
-        <Button 
-          title='Contact Us'
-          onPress={() => navigation.navigate('Contact Us')}
-        />
+      <View style={styles.accountOptions}>
+        <TouchableOpacity onPress={fetchUserInfo}>
+          <View style={styles.accountOption}>
+            <Ionicons name = 'help-circle' size = '22' color = '#000' />
+            <Text style={styles.accountOptionText}>Help And Support</Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => logoutUser(false)}>
+          <View style={styles.accountOption}>
+            <Ionicons name = 'people' size = '22' color = '#000' />
+            <Text style={styles.accountOptionText}>About Us</Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => logoutUser(false)}>
+          <View style={styles.accountOption}>
+            <Ionicons name = 'mail' size = '22' color = '#000' />
+            <Text style={styles.accountOptionText}>Contact Us</Text>
+          </View>
+        </TouchableOpacity>
       </View>
-      {user && <LogoutButton />}
+      {user ? <LogoutButton /> : <View />}
     </View>
   );
 }
@@ -131,5 +159,22 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#db411a',
     marginLeft: 15
+  },
+  accountOptions: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    marginTop: 10,
+    marginLeft: 14
+  },
+  accountOption: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    paddingVertical: 10
+  },
+  accountOptionText: {
+    marginLeft: 10,
+    fontSize: 16
   }
 });
