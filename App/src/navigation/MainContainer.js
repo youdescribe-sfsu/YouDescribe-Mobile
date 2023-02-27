@@ -11,20 +11,19 @@ import { useUserUpdate, getUser } from '../contexts/UserContext';
 
 import SearchBar from '../components/SearchBar';
 
-//Screens
-import MyDescriptionsScreen from './screens/MyDescriptionsScreen';
-
+//Navigators
 import HomeScreenNavigator from './HomeScreenNavigator';
 import WishlistScreenNavigator from './WishlistScreenNavigator';
 import SearchScreenNavigator from './SearchScreenNavigator';
 import AccountScreenNavigator from './AccountScreenNavigator';
+import MyDescriptionsScreenNavigator from './MyDescriptionsScreenNavigator';
 
 //Screen Names
 const homeName = 'Home Navigator';
 const searchName = 'Search Navigator';
 const wishlistName = 'Wishlist Navigator';
-const myDescriptionsName = 'My Descriptions';
-const accountName = 'Account';
+const myDescriptionsName = 'My Descriptions Navigator';
+const accountName = 'Account Navigator';
 
 const Tab = createBottomTabNavigator();
 
@@ -106,7 +105,7 @@ export default function MainContainer({userInfo}) {
             />
             <Tab.Screen
                 name={myDescriptionsName}
-                component={MyDescriptionsScreen}
+                component={MyDescriptionsScreenNavigator}
                 options={{ title: 'My Descriptions',
                            tabBarLabel: 'My Descriptions',
                            tabBarAccessibilityLabel: 'My Descriptions',

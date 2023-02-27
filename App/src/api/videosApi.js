@@ -41,6 +41,22 @@ const getSearchedVideos = async (searchTerm, page=1) => {
     }
 }
 
+// Function to fetch user described videos
+const getUserVideos = async (userId) => {
+    try {
+        const response = await apiClient.get(`/videos/user/${userId}`);
+        if(response.data){
+            const videos = response.data.result;
+            const videosData = await getVideosData(videos);
+            return videosData;
+        }
+        return []
+    } catch (error) {
+        console.log('Error: ', error);
+        return null;
+    }
+}
+
 // Function to fetch title, channel title, and thumbnail url of all videos.
 const getVideosData = async (videos) => {
     try {
@@ -49,6 +65,7 @@ const getVideosData = async (videos) => {
         const response = await apiClient.get(`/videos/getyoutubedatafromcache?youtubeids=${youtubeIds}&key=home`);
         if(response.data){
             const result = JSON.parse(response.data.result);
+            console.log("Result: ", result);
             const items = result.items;
             const videoData = [];
             for (let i = 0; i < items.length; i++) {
@@ -95,6 +112,7 @@ const getAudioDescriptions = async (videoId) => {
 export default {
     getHomeVideos,
     getSearchedVideos,
+    getUserVideos,
     getVideosData,
     getAudioDescriptions
 }
