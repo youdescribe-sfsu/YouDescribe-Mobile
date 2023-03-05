@@ -1,4 +1,4 @@
-import { apiClient } from './client';
+import { apiClient, youTubeApiClient, youTubeApiKey } from './client';
 
 import
 { convertISO8601ToSeconds,
@@ -25,7 +25,7 @@ const getHomeVideos = async () => {
     }
 }
 
-// Function to fetch searched videos
+// Function to fetch described searched videos
 const getSearchedVideos = async (searchTerm, page=1) => {
     try {
         const response = await apiClient.get(`/videos/search?q=${searchTerm}&page=${page}`);
@@ -37,6 +37,54 @@ const getSearchedVideos = async (searchTerm, page=1) => {
         return []
     } catch (error) {
         console.log('Error: ', error);
+        return null;
+    }
+}
+
+// Function to fetch non-described searched videos
+const getSearchedVideosFromYoutube = async(searchTerm, page=1) => {
+    try {
+        const response = await apiClient.get(`/videos/search?q=${searchTerm}&page=${page}`);
+        if(response.data){
+            const describedVideos = response.data.result;
+            let describedVideoIds = [];
+            describedVideos.forEach((video) => {
+                describedVideoIds.push(video.youtube_id);
+            });
+            let youTubeSearchResults = await youTubeApiClient.get(`/search?part=snippet&q=${searchTerm}&maxResults=50&key=${youTubeApiKey}`);
+            youTubeSearchResults = youTubeSearchResults.data.items;
+            let nonDescribedVideoIds = [];
+            youTubeSearchResults.forEach((video) => {
+                if(describedVideoIds.indexOf(video.id.videoId) <= -1){
+                    nonDescribedVideoIds.push(video.id.videoId);
+                }
+            });
+            nonDescribedVideoIds = nonDescribedVideoIds.join(",");
+            let videosFromYouTube = await youTubeApiClient.get(`/videos?id=${nonDescribedVideoIds}&part=contentDetails,snippet,statistics&key=${youTubeApiKey}`);
+            videosFromYouTube = videosFromYouTube.data.items;
+            const videoData = [];
+            videosFromYouTube.forEach((video) => {
+                const snippet = video.snippet;
+                const duration = convertSecondsToCardFormat(
+                    convertISO8601ToSeconds(video.contentDetails.duration)
+                );
+                const obj = {
+                    title: snippet.title,
+                    channel: snippet.channelTitle,
+                    thumbnail: snippet.thumbnails.medium.url,
+                    duration: duration,
+                    videoId: video.id,
+                    publishedAt: convertISO8601ToDate(snippet.publishedAt),
+                    likes: convertLikesToCardFormat(video.statistics.likeCount),
+                    views: convertViewsToCardFormat(video.statistics.viewCount)
+                }
+                videoData.push(obj);
+            });
+            return videoData;
+        }
+        return [];
+    } catch (error) {
+        console.log(error);
         return null;
     }
 }
@@ -60,12 +108,10 @@ const getUserVideos = async (userId) => {
 // Function to fetch title, channel title, and thumbnail url of all videos.
 const getVideosData = async (videos) => {
     try {
-        console.log("getVideosData videos length: ", videos.length);
         const youtubeIds = generateYoutubeIdsString(videos);
         const response = await apiClient.get(`/videos/getyoutubedatafromcache?youtubeids=${youtubeIds}&key=home`);
         if(response.data){
             const result = JSON.parse(response.data.result);
-            console.log("Result: ", result);
             const items = result.items;
             const videoData = [];
             for (let i = 0; i < items.length; i++) {
@@ -112,6 +158,7 @@ const getAudioDescriptions = async (videoId) => {
 export default {
     getHomeVideos,
     getSearchedVideos,
+    getSearchedVideosFromYoutube,
     getUserVideos,
     getVideosData,
     getAudioDescriptions

@@ -20,7 +20,7 @@ const getWishlistVideos = async () => {
 // Function to fetch searched videos
 const getSearchedVideos = async (searchTerm, page=1) => {
     try {
-        const response = await apiClient.get(`/wishlist/search?q=${searchTerm}&page=${page}`);
+        const response = await apiClient.get(`/wishlist/search?search=${searchTerm}&page=${page}`);
         if(response.data){
             const videos = response.data.result.items;
             const videosData = await videosApi.getVideosData(videos);
