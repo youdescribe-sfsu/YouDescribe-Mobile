@@ -27,8 +27,8 @@ export default function VideoScreen({ route }) {
     const [audioClips, setAudioClips] = useState([]);
     const [isVideoPlaying, setIsVideoPlaying] = useState(false);
     // const [currentVideoProgress, setCurrentVideoProgress] = useState(null);
-    // const [videoVolume, setVideoVolume] = useState(null);
-    // const [oldVolume, setOldVolume] = useState(null);
+    const [videoVolume, setVideoVolume] = useState(100);
+    const [oldVolume, setOldVolume] = useState(50);
     // const [playheadPosition, setPlayheadPosition] = useState(null);
     const [progressWatcher, setProgressWatcher] = useState(null);
 
@@ -141,13 +141,13 @@ export default function VideoScreen({ route }) {
                 if(currentClipRef.current && currentClipRef.current.playbackType === "extended"){
                     console.log("Extended AC! Pause Video.");
                     setIsVideoPlaying(false);
-                    if (currentClipRef.current.audio.playing()){
-                        pauseAudioClips();
-                    } else {
-                        currentClipRef.current.audio.play();
-                    }
+                    // if (currentClipRef.current.audio.playing()){
+                    //     pauseAudioClips();
+                    // } else {
+                    //     currentClipRef.current.audio.play();
+                    // }
                 } else {
-                    checkSeek();
+                    // checkSeek();
                     startProgressWatcher();
                 }
                 break;
@@ -201,7 +201,7 @@ export default function VideoScreen({ route }) {
     const startProgressWatcher = () => {
         console.log("startProgressWatcher");
         if(selectedAudioDescriptionId){
-            const interval = 50;
+            const interval = 141;
             if(progressWatcher){
                 stopProgressWatcher();
             }
@@ -213,23 +213,26 @@ export default function VideoScreen({ route }) {
                     // setPlayheadPosition( 756 * (currentVideoProgress / videoDurationInSeconds) );
     
                     // TODO: Audio Ducking goes here.
+                    if(currentClipRef.current && currentClipRef.current.playbackType === 'inline'){
+                        setVideoVolume(5);
+                    }
                     const currentVideoProgressFloor = parseFloat(currentTime);
                     // Skipping an audio clip that is stuck in the buffering phase
-                    if(currentClipRef.current &&
-                       currentVideoProgressFloor > parseFloat(currentClipRef.current.start_time + currentClipRef.current.duration)){
-                        await currentClipRef.current.audio.stopAsync();
-                        await currentClipRef.current.audio.unloadAsync();
-                        currentClipRef.current = null;
-                        console.log("Audio Clip Skipped.");
-                    }
+                    // if(currentClipRef.current &&
+                    //    currentVideoProgressFloor > parseFloat(currentClipRef.current.start_time + currentClipRef.current.duration + 0.25)){
+                    //     await currentClipRef.current.audio.stopAsync();
+                    //     await currentClipRef.current.audio.unloadAsync();
+                    //     currentClipRef.current = null;
+                    //     console.log("Audio Clip Skipped.");
+                    // }
                     // console.log("CurrentVideoProgressFloor ", currentVideoProgressFloor);
                     audioClips.forEach((audioClip, idx) => {
                         if(currentVideoProgressFloor >= parseFloat(parseFloat(audioClip.start_time) - 0.07) &&
                            currentVideoProgressFloor <= parseFloat(parseFloat(audioClip.start_time) + 0.07)){
                             if(!currentClipRef.current){
-                                // videoPlayerRef.current?.getVolume().then(volume => {
-                                //     setOldVolume(volume);
-                                // });
+                                videoPlayerRef.current.getVolume().then(volume => {
+                                    setOldVolume(volume);
+                                });
                                 playAudioClip(audioClip, idx);
                             }
                         }
@@ -249,62 +252,94 @@ export default function VideoScreen({ route }) {
     }
 
     const playAudioClip = async (audioClip, idx, timestamp = null) => {
-        console.log("playAudioClip");
-        // console.log("Audio Clip: ", audioClip);
-        console.log("Audio Clip ID: ",audioClip._id);
-        console.log("Audio Clip Duration: ", audioClip.duration);
-        console.log("Audio Clip Start Time: ", audioClip.start_time);
-        if(currentClipRef.current === null){
-            console.log("Index: ", idx);
-            currentClipRef.current = {
-                audio: audioClip.sound,
-                playbackType: audioClip.playback_type,
-                duration: audioClip.duration,
-                start_time: audioClip.start_time
-            };
-            // console.log(currentClipRef.current);
-            if(timestamp){
-                await audioClip.sound.setPositionAsync(timestamp);
+        try {
+            console.log("playAudioClip");
+            // console.log("Audio Clip: ", audioClip);
+            console.log("Audio Clip Type: ",audioClip.playback_type);
+            console.log("Audio Clip Duration: ", parseInt(audioClip.duration*1000));
+            console.log("Audio Clip Start Time: ", audioClip.start_time);
+            if(currentClipRef.current === null){
+                console.log("Index: ", idx);
+                currentClipRef.current = {
+                    audio: audioClip.sound,
+                    playbackType: audioClip.playback_type,
+                    duration: audioClip.duration,
+                    start_time: audioClip.start_time
+                };
+                // console.log(currentClipRef.current);
+                if(timestamp){
+                    await audioClip.sound.setPositionAsync(timestamp);
+                }
+                if(audioClip.playback_type === "extended"){
+                    setIsVideoPlaying(false);
+                }
+                // const status = await audioClip.sound.getStatusAsync();
+                // if(!status.isLoaded){
+                //     await audioClip.sound.loadAsync();
+                // }
+                await audioClip.sound.playAsync();
+                // let vol = await videoPlayerRef.current.getVolume();
+                // console.log("Current video volume is ", vol);
             }
-            if(audioClip.playback_type === "extended"){
-                setIsVideoPlaying(false);
-            }
-            await audioClip.sound.playAsync();
+        } catch (error) {
+            console.log(error);
         }
     }
 
     const pauseAudioClips = async () => {
-        console.log("pauseAudioClips");
-        if(currentClipRef.current){
-            if(currentClipRef.current.playbackType === 'inline'){
-                await currentClipRef.current.audio.stopAsync();
-                currentClipRef.current = null;
-            } else {
-                await currentClipRef.current.audio.pauseAsync();
+        try {
+            console.log("pauseAudioClips");
+            if(currentClipRef.current){
+                if(currentClipRef.current.playbackType === 'inline'){
+                    await currentClipRef.current.audio.stopAsync();
+                    currentClipRef.current = null;
+                } else {
+                    await currentClipRef.current.audio.pauseAsync();
+                }
             }
+        } catch (error) {
+            console.log(error);
         }
     }
 
+    let prevTimestamp = -1;
     const handleClipUpdates = async (status) => {
         // console.log("handleClipUpdates");
         if(status.isLoaded){
             if(status.isPlaying){
                 console.log("Audio Clip is Playing");
                 console.log("Audio Clip current timestamp: ",status.positionMillis/1000);
-                // if(currentClipRef.current && currentClipRef.current.playbackType === 'extended'){
-                //     setIsVideoPlaying(false);
-                // }
+                // Manually checking if the audio clip has finished playing
+                // because for some clips, when they finish playing, the status doesn't change automatically
+                if(status.positionMillis === prevTimestamp &&
+                   status.positionMillis === parseInt(currentClipRef.current.duration*1000)){
+                    console.log("Finished Playing Manually");
+                    if(currentClipRef.current){
+                        console.log("Inside currentClipRef.current");
+                        if(currentClipRef.current.playbackType === 'extended'){
+                            setIsVideoPlaying(true);
+                        } else {
+                            setVideoVolume(100);
+                        }
+                        await currentClipRef.current.audio.stopAsync();
+                        currentClipRef.current = null;
+                    }
+                } else {
+                    prevTimestamp = status.positionMillis;
+                }
             } else if(status.isBuffering){
                 console.log("Audio Clip Buffering");
             } else if(status.didJustFinish){
-                console.log("Finished Playing");
-                if(currentClipRef.current && currentClipRef.current.playbackType === 'extended'){
-                    setIsVideoPlaying(true);
-                } else {
-                    // TODO: Reverse Audio Ducking goes here.
+                console.log("Finished Playing Automatically");
+                if(currentClipRef.current){
+                    console.log("Inside currentClipRef.current");
+                    if(currentClipRef.current.playbackType === 'extended'){
+                        setIsVideoPlaying(true);
+                    } else {
+                        setVideoVolume(100);
+                    }
+                    currentClipRef.current = null;
                 }
-                await currentClipRef.current.audio.unloadAsync();
-                currentClipRef.current = null;
             }
         } else {
             if(status.error) {
@@ -342,6 +377,7 @@ export default function VideoScreen({ route }) {
                 ref={videoPlayerRef}
                 height={deviceWidth * 9 / 16} // Setting the height to 9/16th of the device's width as the video player's aspect ratio is 16:9
                 play={isVideoPlaying}
+                volume={videoVolume}
                 videoId={video.videoId}
                 onChangeState={onVPStateChange}
             />

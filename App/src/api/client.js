@@ -10,4 +10,4 @@ export const youTubeApiClient = axios.create({
 });
 
 export const youTubeApiKey = "AIzaSyDV8QMir3NE8S2jA1GyXvLXyTuSq72FPyE";
-export const audioClipsUploadsPath = "https://dev-api.youdescribe.org/audio-descriptions-files";
+export const audioClipsUploadsPath = "https://api.youdescribe.org/audio-descriptions-files";
