@@ -9,7 +9,7 @@ export default function VideoCard(props) {
     if(props.buttons === 'upvote-describe') {
         buttons = (
             <>
-                <UpVoteButton></UpVoteButton>
+                <UpVoteButton youtubeId={props.video.videoId}></UpVoteButton>
                 <DescribeButton></DescribeButton>
             </>
         );
@@ -30,31 +30,27 @@ export default function VideoCard(props) {
     }
 
     return (
-        <TouchableOpacity
-            onPress={openVideo}
-        >
-            <View style={styles.card}>
-                <View style={styles.thumbnail}>
-                    <Image
-                        style={styles.thumbnailImage}
-                        resizeMode='cover'
-                        source={{
-                            uri: `${props.video.thumbnail}`
-                        }}
-                    />
-                    <View style={styles.thumbnailDuration}>
-                        <Text style={{color: '#fff', fontSize: 12}}>{props.video.duration}</Text>
-                    </View>
+        <View style={styles.card}>
+            <TouchableOpacity onPress={openVideo} style={styles.thumbnail} >
+                <Image
+                    style={styles.thumbnailImage}
+                    resizeMode='cover'
+                    source={{
+                        uri: `${props.video.thumbnail}`
+                    }}
+                />
+                <View style={styles.thumbnailDuration}>
+                    <Text style={{color: '#fff', fontSize: 12}}>{props.video.duration}</Text>
                 </View>
-                <View style={styles.videoInfo}>
-                    <Text style={styles.videoTitle}>{props.video.title}</Text>
-                    <Text>{props.video.channel}</Text>
-                </View>
-                <View style={styles.videoButtons}>
-                    {buttons}
-                </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={openVideo} style={styles.videoInfo} >
+                <Text style={styles.videoTitle}>{props.video.title}</Text>
+                <Text>{props.video.channel}</Text>
+            </TouchableOpacity>
+            <View style={styles.videoButtons}>
+                {buttons}
             </View>
-        </TouchableOpacity>
+        </View>
     );
 }
 

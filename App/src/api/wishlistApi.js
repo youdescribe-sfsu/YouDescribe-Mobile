@@ -33,7 +33,34 @@ const getSearchedVideos = async (searchTerm, page=1) => {
     }
 }
 
+// Function to add a vote to a wishlist video
+const upvoteVideo = async (youtubeId, userId, userToken) => {
+    try {
+        console.log("youtubeId: ", youtubeId);
+        console.log("userId: ", userId);
+        console.log("userToken: ", userToken);
+        const response = await fetch(`https://api.youdescribe.org/v1/wishlist`, {
+            method: 'POST',
+            body: JSON.stringify({
+                youtubeId: youtubeId,
+                userId: userId,
+                userToken: userToken
+            }),
+            headers: { 'Content-Type': 'application/json' }
+        });
+        console.log("Success Upvote", response);
+    } catch (error) {
+        if(error.code === 67){
+            console.log("It is not possible to vote again for this video.");
+        } else {
+            console.log("It was impossible to vote. Maybe your session has expired. Try to logout and login again.");
+            console.log(error);
+        }
+    }
+}
+
 export default {
     getWishlistVideos,
-    getSearchedVideos
+    getSearchedVideos,
+    upvoteVideo
 }
