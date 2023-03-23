@@ -1,9 +1,12 @@
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
+import { getDescriptionActivity } from '../contexts/DescriptionActivityContext';
+
 export default function SelectedDescriptionBox(props) {
+    const isDescriptionActive = getDescriptionActivity();
     let describer = props.user;
-    if(describer){
+    if(describer && isDescriptionActive){
         return (
             <View style={styles.container}>
                 <Text>Selected Description</Text>

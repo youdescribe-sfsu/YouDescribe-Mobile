@@ -4,6 +4,7 @@ import YoutubePlayer from 'react-native-youtube-iframe';
 import { Audio } from 'expo-av';
 
 import { audioClipsUploadsPath } from "../../api/client";
+import { getDescriptionActivity } from "../../contexts/DescriptionActivityContext";
 
 // import VideoPlayer from '../../components/VideoPlayer';
 import VideoInfo from "../../components/VideoInfo";
@@ -15,6 +16,7 @@ import videosApi from "../../api/videosApi";
 export default function VideoScreen({ route }) {
     console.log("Rerendered!!");
     const deviceWidth = useWindowDimensions().width;
+    const isDescriptionActive = getDescriptionActivity();
     const video = route.params.video;
     let videoDurationInSeconds = null;
     const videoPlayerRef = useRef();
@@ -148,7 +150,9 @@ export default function VideoScreen({ route }) {
                     // }
                 } else {
                     // checkSeek();
-                    startProgressWatcher();
+                    if(isDescriptionActive){
+                        startProgressWatcher();
+                    }
                 }
                 break;
             case "paused":
@@ -371,8 +375,6 @@ export default function VideoScreen({ route }) {
 
     return (
         <View style={styles.container}>
-            {/* <VideoPlayer video={video}/> */}
-            {/* {videoPlayer} */}
             <YoutubePlayer
                 ref={videoPlayerRef}
                 height={deviceWidth * 9 / 16} // Setting the height to 9/16th of the device's width as the video player's aspect ratio is 16:9

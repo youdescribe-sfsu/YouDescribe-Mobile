@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SplashScreen from 'expo-splash-screen';
 
 import { UserProvider } from './src/contexts/UserContext';
+import { DescriptionActivityProvider } from './src/contexts/DescriptionActivityContext';
 import MainContainer from "./src/navigation/MainContainer";
 
 // Keep the splash screen visible while we fetch resources
@@ -47,7 +48,9 @@ export default function App() {
 
   return (
     <UserProvider>
-      <MainContainer userInfo={userInfo}/>
+      <DescriptionActivityProvider>
+        <MainContainer userInfo={userInfo}/>
+      </DescriptionActivityProvider>
     </UserProvider>
   );
 }
