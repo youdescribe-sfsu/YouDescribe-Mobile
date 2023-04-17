@@ -7,6 +7,14 @@ export default function SelectedDescriptionBox(props) {
     const isDescriptionActive = getDescriptionActivity();
     let describer = props.user;
     if(describer && isDescriptionActive){
+        const starColors = [];
+        for(let i=1; i<=5; i++){
+            if(describer.overall_rating_average && describer.overall_rating_average >= i){
+                starColors.push('gold');
+            } else {
+                starColors.push('#787070');
+            }
+        }
         return (
             <View style={styles.container}>
                 <Text>Selected Description</Text>
@@ -18,11 +26,11 @@ export default function SelectedDescriptionBox(props) {
                     <View style={styles.nameRating}>
                         <Text style={styles.describerName}>{describer.name}</Text>
                         <View style={styles.rating}>
-                            <FontAwesome5 name='star' size={18} color={'#787070'} solid/>
-                            <FontAwesome5 name='star' size={18} color={'#787070'} solid/>
-                            <FontAwesome5 name='star' size={18} color={'#787070'} solid/>
-                            <FontAwesome5 name='star' size={18} color={'#787070'} solid/>
-                            <FontAwesome5 name='star' size={18} color={'#787070'} solid/>
+                            <FontAwesome5 name='star' size={18} color={starColors[0]} solid/>
+                            <FontAwesome5 name='star' size={18} color={starColors[1]} solid/>
+                            <FontAwesome5 name='star' size={18} color={starColors[2]} solid/>
+                            <FontAwesome5 name='star' size={18} color={starColors[3]} solid/>
+                            <FontAwesome5 name='star' size={18} color={starColors[4]} solid/>
                         </View>
                     </View>
                 </View>

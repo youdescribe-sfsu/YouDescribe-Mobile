@@ -17,11 +17,18 @@ export default function ChangeDescriptionModal({ hideModal, describers, selected
     }
 
     const renderDescriberInfo = ({item}) => {
+        const starColors = [];
+        for(let i=1; i<=5; i++){
+            if(item.overall_rating_average && item.overall_rating_average >= i){
+                starColors.push('gold');
+            } else {
+                starColors.push('#787070');
+            }
+        }
         return(
             <TouchableOpacity
                 style={styles.describerInfo}
                 onPress={() => {
-                    console.log("Id Touched: ", item.descriptionId);
                     changeSelectedDescription(item.descriptionId);
                 }}
             >
@@ -32,11 +39,11 @@ export default function ChangeDescriptionModal({ hideModal, describers, selected
                 <View style={styles.nameRating}>
                     <Text style={styles.describerName}>{item.name}</Text>
                     <View style={styles.rating}>
-                        <FontAwesome5 name='star' size={18} color={'#787070'} solid/>
-                        <FontAwesome5 name='star' size={18} color={'#787070'} solid/>
-                        <FontAwesome5 name='star' size={18} color={'#787070'} solid/>
-                        <FontAwesome5 name='star' size={18} color={'#787070'} solid/>
-                        <FontAwesome5 name='star' size={18} color={'#787070'} solid/>
+                        <FontAwesome5 name='star' size={18} color={starColors[0]} solid/>
+                        <FontAwesome5 name='star' size={18} color={starColors[1]} solid/>
+                        <FontAwesome5 name='star' size={18} color={starColors[2]} solid/>
+                        <FontAwesome5 name='star' size={18} color={starColors[3]} solid/>
+                        <FontAwesome5 name='star' size={18} color={starColors[4]} solid/>
                     </View>
                 </View>
                 { item.isSelected && <FontAwesome5 name="check" size={22} color={'#fff'} /> }
@@ -109,7 +116,7 @@ const styles = StyleSheet.create({
         borderRadius: '50%'
     },
     describerName:{
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: 'bold',
         color: 'white'
     },
