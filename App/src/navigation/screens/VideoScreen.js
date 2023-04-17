@@ -1,4 +1,4 @@
-import { View, StyleSheet, useWindowDimensions } from "react-native";
+import { View, StyleSheet, useWindowDimensions, Modal, Pressable, Text } from "react-native";
 import { useState, useEffect, useRef } from "react";
 import YoutubePlayer from 'react-native-youtube-iframe';
 import { Audio } from 'expo-av';
@@ -6,7 +6,7 @@ import { Audio } from 'expo-av';
 import { audioClipsUploadsPath } from "../../api/client";
 import { getDescriptionActivity } from "../../contexts/DescriptionActivityContext";
 
-// import VideoPlayer from '../../components/VideoPlayer';
+import ChangeDescriptionModal from "../../components/ChangeDescriptionModal";
 import VideoInfo from "../../components/VideoInfo";
 import SelectedDescriptionBox from "../../components/SelectedDescriptionBox";
 import DescriptionOptions from "../../components/DescriptionOptions";
@@ -33,6 +33,7 @@ export default function VideoScreen({ route }) {
     const [oldVolume, setOldVolume] = useState(50);
     // const [playheadPosition, setPlayheadPosition] = useState(null);
     const [progressWatcher, setProgressWatcher] = useState(null);
+    const [modalVisible, setModalVisible] = useState(false);
 
     const getAudioDescriptions = async () => {
         console.log("getAudioDescriptions");
@@ -352,6 +353,14 @@ export default function VideoScreen({ route }) {
         }
     }
 
+    const showModal = () => {
+        setModalVisible(true);
+    }
+
+    const hideModal = () => {
+        setModalVisible(false);
+    }
+
     useEffect(() => {
         getAudioDescriptions();
     }, []);
@@ -365,6 +374,7 @@ export default function VideoScreen({ route }) {
     }, [audioDescriptionsIds]);
 
     useEffect(() => {
+        console.log("SelectedAudioDescriptionId changed to ", selectedAudioDescriptionId);
         preLoadAudioClips();
     }, [selectedAudioDescriptionId]);
 
@@ -385,7 +395,23 @@ export default function VideoScreen({ route }) {
             />
             <VideoInfo video={video}/>
             <SelectedDescriptionBox user={audioDescriptionsIdsUsers[selectedAudioDescriptionId]} />
-            <DescriptionOptions />
+            <DescriptionOptions
+                multipleDescriptions={audioDescriptions && audioDescriptions.length > 1}
+                showModal={showModal}
+            />
+            <Modal
+                animationType="slide"
+                visible={modalVisible}
+                onRequestClose={() =>  setModalVisible(!modalVisible) }
+                transparent={true}
+            >
+                <ChangeDescriptionModal
+                    hideModal={hideModal}
+                    describers={audioDescriptionsIdsUsers}
+                    selectedAudioDescriptionId={selectedAudioDescriptionId}
+                    setSelectedAudioDescriptionId={setSelectedAudioDescriptionId}
+                />
+            </Modal>
         </View>
     );
 }
@@ -394,5 +420,10 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'flex-start'
+    },
+    modalView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 });
