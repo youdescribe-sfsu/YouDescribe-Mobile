@@ -54,6 +54,7 @@ export default function SearchResults({stackNavigation}) {
                     component={DescribedSearchResultsComponent}
                     options={{
                         tabBarLabel: "Described",
+                        tabBarAccessibilityLabel: `Described video results for ${searchTerm}`,
                         tabBarLabelStyle: { fontSize: 10 }
                     }}
                 />
@@ -62,6 +63,7 @@ export default function SearchResults({stackNavigation}) {
                     component={WishlistSearchResultsComponent}
                     options={{
                         tabBarLabel: "Wishlist",
+                        tabBarAccessibilityLabel: `Wishlist video results for ${searchTerm}`,
                         tabBarLabelStyle: { fontSize: 10 }
                     }}
                 />
@@ -70,6 +72,7 @@ export default function SearchResults({stackNavigation}) {
                     component={NonDescribedSearchResultsComponent}
                     options={{
                         tabBarLabel: "Non-Described",
+                        tabBarAccessibilityLabel: `Non-Described video results for ${searchTerm}`,
                         tabBarLabelStyle: { fontSize: 10 }
                     }}
                 />

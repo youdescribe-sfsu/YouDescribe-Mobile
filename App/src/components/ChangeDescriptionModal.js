@@ -31,6 +31,7 @@ export default function ChangeDescriptionModal({ hideModal, describers, selected
                 onPress={() => {
                     changeSelectedDescription(item.descriptionId);
                 }}
+                accessibilityLabel={`Description by ${item.name}. Rated ${item.overall_rating_average} stars out of 5.`}
             >
                 <Image
                     source={{uri: item.picture}}

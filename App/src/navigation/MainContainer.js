@@ -55,23 +55,23 @@ export default function MainContainer({userInfo}) {
                     } else if (rn === wishlistName) {
                         iconName = focused ? 'heart' : 'heart-outline';
                     }else if (rn === myDescriptionsName) {
-                        return <FontAwesome5 name = 'audio-description' size = {size} color = {color} />
+                        return <FontAwesome5 name = 'audio-description' size = {28} color = {color} />
                     } else if (rn === accountName && !user) {
                         iconName = focused ? 'person-circle' : 'person-circle-outline';
                     } else if(rn === accountName && user) {
                         if(focused){
                           return <Image
                                     source={{uri: user.picture}}
-                                    style={{width: size, height: size, borderRadius: 50, borderWidth: 2, borderColor: color}}
+                                    style={{width: 28, height: 28, borderRadius: 50, borderWidth: 2, borderColor: color}}
                                   />
                         }
                         return <Image
                                   source={{uri: user.picture}}
-                                  style={{width: size, height: size, borderRadius: 50}}
+                                  style={{width: 28, height: 28, borderRadius: 50}}
                                 />
                     }
 
-                    return <Ionicons name = {iconName} size = {size} color = {color} />
+                    return <Ionicons name = {iconName} size = {28} color = {color} />
                 },
                 tabBarStyle: styles.tabBar,
                 tabBarLabelStyle: styles.label,
@@ -84,7 +84,8 @@ export default function MainContainer({userInfo}) {
                 component={HomeScreenNavigator}
                 options={{ title: 'YouDescribe',
                            tabBarLabel: 'Home',
-                           tabBarAccessibilityLabel: 'Recent Videos',
+                           tabBarAccessibilityLabel: 'Recent Videos. Tab 1 of 5',
+                           tabBarShowLabel: false
                         }}
             />
             <Tab.Screen
@@ -92,7 +93,8 @@ export default function MainContainer({userInfo}) {
                 component={SearchScreenNavigator}
                 options={{ headerTitle: () => <SearchBar />,
                            tabBarLabel: 'Search',
-                           tabBarAccessibilityLabel: 'Search Videos',
+                           tabBarAccessibilityLabel: 'Search Videos. Tab 2 of 5',
+                           tabBarShowLabel: false
                         }}
             />
             <Tab.Screen
@@ -100,7 +102,8 @@ export default function MainContainer({userInfo}) {
                 component={WishlistScreenNavigator}
                 options={{ title: 'Wishlist',
                            tabBarLabel: 'Wishlist',
-                           tabBarAccessibilityLabel: 'Wishlist',
+                           tabBarAccessibilityLabel: 'Wishlist. Tab 3 of 5',
+                           tabBarShowLabel: false
                         }}
             />
             <Tab.Screen
@@ -108,7 +111,8 @@ export default function MainContainer({userInfo}) {
                 component={MyDescriptionsScreenNavigator}
                 options={{ title: 'My Descriptions',
                            tabBarLabel: 'My Descriptions',
-                           tabBarAccessibilityLabel: 'My Descriptions',
+                           tabBarAccessibilityLabel: 'My Descriptions. Tab 4 of 5',
+                           tabBarShowLabel: false
                         }}
             />
             <Tab.Screen
@@ -116,7 +120,8 @@ export default function MainContainer({userInfo}) {
                 component={AccountScreenNavigator}
                 options={{ title: 'Account',
                            tabBarLabel: 'Account',
-                           tabBarAccessibilityLabel: 'Account, Help and Settings',
+                           tabBarAccessibilityLabel: 'Account, Help and Settings. Tab 5 of 5',
+                           tabBarShowLabel: false
                         }}
             />
         </Tab.Navigator>

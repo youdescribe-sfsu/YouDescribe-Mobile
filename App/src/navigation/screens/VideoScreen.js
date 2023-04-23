@@ -1,4 +1,4 @@
-import { View, StyleSheet, useWindowDimensions, Modal, Pressable, Text } from "react-native";
+import { View, StyleSheet, useWindowDimensions, Modal } from "react-native";
 import { useState, useEffect, useRef } from "react";
 import YoutubePlayer from 'react-native-youtube-iframe';
 import { Audio } from 'expo-av';
@@ -357,7 +357,13 @@ export default function VideoScreen({ route }) {
         setModalVisible(true);
     }
 
-    const hideModal = () => {
+    const hideModal = async () => {
+        stopProgressWatcher();
+        videoPlayerRef.current?.seekTo(0,true);
+        if(currentClipRef.current){
+            await currentClipRef.current.audio.stopAsync();
+            currentClipRef.current = null;
+        }
         setModalVisible(false);
     }
 

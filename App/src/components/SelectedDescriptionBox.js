@@ -7,9 +7,10 @@ export default function SelectedDescriptionBox(props) {
     const isDescriptionActive = getDescriptionActivity();
     let describer = props.user;
     if(describer && isDescriptionActive){
+        const rating = describer.overall_rating_average === undefined ? 0 : describer.overall_rating_average;
         const starColors = [];
         for(let i=1; i<=5; i++){
-            if(describer.overall_rating_average && describer.overall_rating_average >= i){
+            if(rating >= i){
                 starColors.push('gold');
             } else {
                 starColors.push('#787070');
@@ -18,7 +19,11 @@ export default function SelectedDescriptionBox(props) {
         return (
             <View style={styles.container}>
                 <Text>Selected Description</Text>
-                <View style={styles.describerInfo}>
+                <View
+                    style={styles.describerInfo}
+                    accessible={true}
+                    accessibilityLabel={`Description by ${describer.name}. Rated ${rating} stars out of 5.`}
+                >
                     <Image
                         source={{uri: describer.picture}}
                         style={styles.describerImage}

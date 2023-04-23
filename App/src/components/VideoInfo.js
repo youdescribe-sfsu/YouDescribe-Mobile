@@ -4,15 +4,15 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 export default function VideoInfo(props) {
 
     return(
-        <View style={styles.container}>
+        <View style={styles.container} accessible={true}>
             <Text style={styles.videoTitle}>{props.video.title}</Text>
             <View style={styles.channelDate}>
-                <Text style={styles.channelName}>{props.video.channel}</Text>
-                <Text>Published on {props.video.publishedAt}</Text>
+                <Text style={styles.channelName} accessibilityLabel={`By: ${props.video.channel}`}>{props.video.channel}</Text>
+                <Text accessibilityLabel={`Published on ${props.video.publishedAt}`}>{props.video.publishedAt}</Text>
             </View>
             <View style={styles.viewsLikes}>
                 <Text><FontAwesome5 name = 'eye' size = {14} /> {props.video.views}</Text>
-                <Text><FontAwesome5 name = 'thumbs-up' size = {14} /> {props.video.likes}</Text>
+                <Text accessibilityLabel={`${props.video.likes} likes`}><FontAwesome5 name = 'thumbs-up' size = {14} /> {props.video.likes}</Text>
             </View>
         </View>
     );

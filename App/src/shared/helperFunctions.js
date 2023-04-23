@@ -60,9 +60,7 @@ export const convertLikesToCardFormat = (likes) => {
 // Function to generate a comma-separated string of youtubeIds of all the given videos.
 export const generateYoutubeIdsString = (videos) => {
     let youtubeIds = [];
-    // Only getting youtubeIds of the first 15 videos for now.
-    // TODO: Change 15 to videos.length
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < videos.length; i++) {
         const video = videos[i];
         if(video){
             youtubeIds.push(video.youtube_id);
