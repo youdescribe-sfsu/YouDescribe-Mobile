@@ -16,7 +16,6 @@ export default function UpVoteButton({youtubeId}) {
                 'You have to be logged in in order to vote'
             );
         } else {
-            console.log("User: ", user);
             setIconName("heart");
             wishlistApi.upvoteVideo(youtubeId, user.google_user_id, user.token);
         }

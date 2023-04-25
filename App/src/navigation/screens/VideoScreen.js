@@ -14,11 +14,10 @@ import DescriptionOptions from "../../components/DescriptionOptions";
 import videosApi from "../../api/videosApi";
 
 export default function VideoScreen({ route }) {
-    console.log("Rerendered!!");
+    // console.log("Rerendered!!");
     const deviceWidth = useWindowDimensions().width;
     const isDescriptionActive = getDescriptionActivity();
     const video = route.params.video;
-    let videoDurationInSeconds = null;
     const videoPlayerRef = useRef();
     const currentClipRef = useRef(null);
     const [audioDescriptions, setAudioDescriptions] = useState([]);
@@ -28,22 +27,17 @@ export default function VideoScreen({ route }) {
     const [selectedAudioDescriptionId, setSelectedAudioDescriptionId] = useState("");
     const [audioClips, setAudioClips] = useState([]);
     const [isVideoPlaying, setIsVideoPlaying] = useState(false);
-    // const [currentVideoProgress, setCurrentVideoProgress] = useState(null);
-    const [videoVolume, setVideoVolume] = useState(100);
-    const [oldVolume, setOldVolume] = useState(50);
-    // const [playheadPosition, setPlayheadPosition] = useState(null);
     const [progressWatcher, setProgressWatcher] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
 
     const getAudioDescriptions = async () => {
-        console.log("getAudioDescriptions");
+        // console.log("getAudioDescriptions");
         const audioDescriptions = await videosApi.getAudioDescriptions(video.videoId);
-        console.log(video);
         setAudioDescriptions(audioDescriptions);
     }
 
     const parseAudioDescriptions = () => {
-        console.log("parseAudioDescriptions");
+        // console.log("parseAudioDescriptions");
         if (audioDescriptions) {
             const adIds = [];
             const adIdsUsers = {};
@@ -60,14 +54,11 @@ export default function VideoScreen({ route }) {
                     if (ad.audio_clips) {
                         ad.audio_clips.forEach((audioClip) => {
                             audioClip.url = `${audioClipsUploadsPath}${audioClip.file_path}/${audioClip.file_name}`;
-                            // audioClip.url = `../../assets/Y6Hfp3HXCSc/${audioClip.file_name}`;
                             adIdsAudioClips[ad._id].push(audioClip);
                         });
                     }
                 }
             });
-            // console.log(adIds);
-            // console.log(adIdsAudioClips);
             setAudioDescriptionsIdsUsers(adIdsUsers);
             setAudioDescriptionsIdsAudioClips(adIdsAudioClips);
             setAudioDescriptionsIds(adIds);
@@ -75,7 +66,7 @@ export default function VideoScreen({ route }) {
     }
 
     const getHighestRatingADId = () => {
-        console.log("getHighestRatingADId");
+        // console.log("getHighestRatingADId");
         let selectedId = null;
         if(audioDescriptions){
             selectedId = audioDescriptionsIds[0];
@@ -94,7 +85,7 @@ export default function VideoScreen({ route }) {
     }
 
     const setAudioDescriptionActive = () => {
-        console.log("setAudioDescritionActive");
+        // console.log("setAudioDescritionActive");
         if(!selectedAudioDescriptionId){
             let adId = getHighestRatingADId();
             if(audioDescriptionsIds.length > 0 && audioDescriptionsIds.indexOf(adId) === -1){
@@ -105,7 +96,7 @@ export default function VideoScreen({ route }) {
     }
 
     const preLoadAudioClips = () => {
-        console.log("preLoadAudioClips");
+        // console.log("preLoadAudioClips");
         let clips = [];
         if(audioDescriptionsIdsAudioClips
            && selectedAudioDescriptionId
@@ -113,8 +104,7 @@ export default function VideoScreen({ route }) {
         ){
             clips = audioDescriptionsIdsAudioClips[selectedAudioDescriptionId];
         }
-        console.log("Number of Audio Clips: ",clips.length);
-        clips.forEach(async (clip, idx) => {
+        clips.forEach(async (clip) => {
             try {
                 const source = { uri: clip.url };
                 const initialStatus = {
@@ -127,30 +117,21 @@ export default function VideoScreen({ route }) {
                 console.error(e);
             }
         });
-        console.log("Setting audio clips");
+        // console.log("Number of Audio Clips: ", clips.length);
+        // console.log("Setting audio clips");
         setAudioClips(clips);
     }
 
-    const onVPStateChange = (event) => {
-        console.log("onVPStateChange");
+    const onVPStateChange = async (event) => {
+        // console.log("onVPStateChange");
         switch(event){
             case "playing":
                 setIsVideoPlaying(true);
-                if(videoDurationInSeconds === null){
-                    videoPlayerRef.current?.getDuration().then(duration => {
-                        videoDurationInSeconds = duration;
-                    });
-                }
                 if(currentClipRef.current && currentClipRef.current.playbackType === "extended"){
-                    console.log("Extended AC! Pause Video.");
-                    setIsVideoPlaying(false);
-                    // if (currentClipRef.current.audio.playing()){
-                    //     pauseAudioClips();
-                    // } else {
-                    //     currentClipRef.current.audio.play();
-                    // }
+                    await currentClipRef.current.audio.stopAsync();
+                    currentClipRef.current = null;
                 } else {
-                    // checkSeek();
+                    checkSeek();
                     if(isDescriptionActive){
                         startProgressWatcher();
                     }
@@ -175,7 +156,7 @@ export default function VideoScreen({ route }) {
     }
 
     const checkSeek = () => {
-        console.log("checkSeek");
+        // console.log("checkSeek");
         if(selectedAudioDescriptionId && currentClipRef.current){
             currentClipRef.current.audio.stop();
             currentClipRef.current = null;
@@ -204,7 +185,7 @@ export default function VideoScreen({ route }) {
     }
 
     const startProgressWatcher = () => {
-        console.log("startProgressWatcher");
+        // console.log("startProgressWatcher");
         if(selectedAudioDescriptionId){
             const interval = 141;
             if(progressWatcher){
@@ -213,31 +194,12 @@ export default function VideoScreen({ route }) {
             const progressWatcher = setInterval(async () => {
                 if(videoPlayerRef && videoPlayerRef.current){
                     const currentTime = await videoPlayerRef.current.getCurrentTime();
-                    // const volume = await videoPlayerRef.current.getVolume();
-                    // setVideoVolume(volume);
-                    // setPlayheadPosition( 756 * (currentVideoProgress / videoDurationInSeconds) );
-    
-                    // TODO: Audio Ducking goes here.
-                    if(currentClipRef.current && currentClipRef.current.playbackType === 'inline'){
-                        setVideoVolume(5);
-                    }
                     const currentVideoProgressFloor = parseFloat(currentTime);
-                    // Skipping an audio clip that is stuck in the buffering phase
-                    // if(currentClipRef.current &&
-                    //    currentVideoProgressFloor > parseFloat(currentClipRef.current.start_time + currentClipRef.current.duration + 0.25)){
-                    //     await currentClipRef.current.audio.stopAsync();
-                    //     await currentClipRef.current.audio.unloadAsync();
-                    //     currentClipRef.current = null;
-                    //     console.log("Audio Clip Skipped.");
-                    // }
-                    // console.log("CurrentVideoProgressFloor ", currentVideoProgressFloor);
+                    // TODO: Audio Ducking goes here.
                     audioClips.forEach((audioClip, idx) => {
                         if(currentVideoProgressFloor >= parseFloat(parseFloat(audioClip.start_time) - 0.07) &&
                            currentVideoProgressFloor <= parseFloat(parseFloat(audioClip.start_time) + 0.07)){
                             if(!currentClipRef.current){
-                                videoPlayerRef.current.getVolume().then(volume => {
-                                    setOldVolume(volume);
-                                });
                                 playAudioClip(audioClip, idx);
                             }
                         }
@@ -249,7 +211,7 @@ export default function VideoScreen({ route }) {
     }
 
     const stopProgressWatcher = () => {
-        console.log("stopProgressWatcher");
+        // console.log("stopProgressWatcher");
         if(progressWatcher){
             clearInterval(progressWatcher);
             setProgressWatcher(null);
@@ -258,33 +220,24 @@ export default function VideoScreen({ route }) {
 
     const playAudioClip = async (audioClip, idx, timestamp = null) => {
         try {
-            console.log("playAudioClip");
-            // console.log("Audio Clip: ", audioClip);
-            console.log("Audio Clip Type: ",audioClip.playback_type);
-            console.log("Audio Clip Duration: ", parseInt(audioClip.duration*1000));
-            console.log("Audio Clip Start Time: ", audioClip.start_time);
+            // console.log("playAudioClip");
+            // console.log("Audio Clip Type: ",audioClip.playback_type);
+            // console.log("Audio Clip Duration: ", parseInt(audioClip.duration*1000));
+            // console.log("Audio Clip Start Time: ", audioClip.start_time);
             if(currentClipRef.current === null){
-                console.log("Index: ", idx);
                 currentClipRef.current = {
                     audio: audioClip.sound,
                     playbackType: audioClip.playback_type,
                     duration: audioClip.duration,
                     start_time: audioClip.start_time
                 };
-                // console.log(currentClipRef.current);
                 if(timestamp){
                     await audioClip.sound.setPositionAsync(timestamp);
                 }
                 if(audioClip.playback_type === "extended"){
                     setIsVideoPlaying(false);
                 }
-                // const status = await audioClip.sound.getStatusAsync();
-                // if(!status.isLoaded){
-                //     await audioClip.sound.loadAsync();
-                // }
                 await audioClip.sound.playAsync();
-                // let vol = await videoPlayerRef.current.getVolume();
-                // console.log("Current video volume is ", vol);
             }
         } catch (error) {
             console.log(error);
@@ -293,7 +246,7 @@ export default function VideoScreen({ route }) {
 
     const pauseAudioClips = async () => {
         try {
-            console.log("pauseAudioClips");
+            // console.log("pauseAudioClips");
             if(currentClipRef.current){
                 if(currentClipRef.current.playbackType === 'inline'){
                     await currentClipRef.current.audio.stopAsync();
@@ -312,19 +265,16 @@ export default function VideoScreen({ route }) {
         // console.log("handleClipUpdates");
         if(status.isLoaded){
             if(status.isPlaying){
-                console.log("Audio Clip is Playing");
-                console.log("Audio Clip current timestamp: ",status.positionMillis/1000);
+                // console.log("Audio Clip is Playing");
+                // console.log("Audio Clip current timestamp: ",status.positionMillis/1000);
                 // Manually checking if the audio clip has finished playing
                 // because for some clips, when they finish playing, the status doesn't change automatically
                 if(status.positionMillis === prevTimestamp &&
                    status.positionMillis === parseInt(currentClipRef.current.duration*1000)){
-                    console.log("Finished Playing Manually");
+                    // console.log("Finished Playing Manually");
                     if(currentClipRef.current){
-                        console.log("Inside currentClipRef.current");
                         if(currentClipRef.current.playbackType === 'extended'){
                             setIsVideoPlaying(true);
-                        } else {
-                            setVideoVolume(100);
                         }
                         await currentClipRef.current.audio.stopAsync();
                         currentClipRef.current = null;
@@ -335,13 +285,10 @@ export default function VideoScreen({ route }) {
             } else if(status.isBuffering){
                 console.log("Audio Clip Buffering");
             } else if(status.didJustFinish){
-                console.log("Finished Playing Automatically");
+                // console.log("Finished Playing Automatically");
                 if(currentClipRef.current){
-                    console.log("Inside currentClipRef.current");
                     if(currentClipRef.current.playbackType === 'extended'){
                         setIsVideoPlaying(true);
-                    } else {
-                        setVideoVolume(100);
                     }
                     currentClipRef.current = null;
                 }
@@ -380,14 +327,8 @@ export default function VideoScreen({ route }) {
     }, [audioDescriptionsIds]);
 
     useEffect(() => {
-        console.log("SelectedAudioDescriptionId changed to ", selectedAudioDescriptionId);
         preLoadAudioClips();
     }, [selectedAudioDescriptionId]);
-
-    useEffect(() => {
-        console.log("isVideoPlaying Changed!");
-        console.log("isVideoPlaying: ", isVideoPlaying);
-    }, [isVideoPlaying]);
 
     return (
         <View style={styles.container}>
@@ -395,7 +336,6 @@ export default function VideoScreen({ route }) {
                 ref={videoPlayerRef}
                 height={deviceWidth * 9 / 16} // Setting the height to 9/16th of the device's width as the video player's aspect ratio is 16:9
                 play={isVideoPlaying}
-                volume={videoVolume}
                 videoId={video.videoId}
                 onChangeState={onVPStateChange}
             />

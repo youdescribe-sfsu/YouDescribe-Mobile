@@ -34,11 +34,12 @@ const getSearchedVideos = async (searchTerm, page=1) => {
 }
 
 // Function to add a vote to a wishlist video
+// TODO: This function is not working at the moment. Returns a status code 504.
 const upvoteVideo = async (youtubeId, userId, userToken) => {
     try {
-        console.log("youtubeId: ", youtubeId);
-        console.log("userId: ", userId);
-        console.log("userToken: ", userToken);
+        // console.log("youtubeId: ", youtubeId);
+        // console.log("userId: ", userId);
+        // console.log("userToken: ", userToken);
         const response = await fetch(`https://api.youdescribe.org/v1/wishlist`, {
             method: 'POST',
             body: JSON.stringify({

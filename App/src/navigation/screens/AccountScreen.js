@@ -15,32 +15,14 @@ export default function AccountScreen({navigation}) {
 
   const user = getUser();
   const updateUser = useUserUpdate();
-  // const [accessToken, setAccessToken] = useState(null);
   const [idToken, setIdToken] = useState(null);
 
   const [request, response, promptAsync] = Google.useAuthRequest({
     responseType: "id_token",
-    // expoClientId: '3158679793-cd09i4qersgl0o0mdab1tfm7lqe9kg8q.apps.googleusercontent.com',
     expoClientId: '1061361249208-9799kv6172rjgmk4gad077639dfrck82.apps.googleusercontent.com',
     iosClientId: '3158679793-l94a8t4asb14ar54ud9a93164sulh56l.apps.googleusercontent.com',
     androidClientId: '3158679793-rlr3itj0rt0j36eqt2tcucaslvl19oob.apps.googleusercontent.com'
   });
-
-  // const fetchUserInfo = async () => {
-  //   try {
-  //     let userInfoResponse = await fetch("https://www.googleapis.com/userinfo/v2/me", {
-  //       headers: { Authorization: `Bearer ${accessToken}` }
-  //     });
-  //     let userInfo = await userInfoResponse.json();
-  //     console.log(userInfo);
-  //     userInfo = JSON.stringify(userInfo);
-  //     // await AsyncStorage.setItem("authCredentials", userInfo);
-  //     updateUser(userInfo);
-  //   } catch (error) {
-  //     console.log(error);
-  //     Alert.alert('Error', error);
-  //   }
-  // }
 
   const fetchUserInfo = async () => {
     try {
@@ -104,7 +86,6 @@ export default function AccountScreen({navigation}) {
 
   useEffect(() => {
     if (response?.type === 'success') {
-      // setAccessToken(response.authentication.accessToken);
       setIdToken(response.params.id_token);
       if(idToken){
         fetchUserInfo();

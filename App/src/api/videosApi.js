@@ -9,7 +9,7 @@ import
   convertViewsToCardFormat
 } from '../shared/helperFunctions';
 
-// Function to fetch all videos
+// Function to fetch all videos from DB
 const getHomeVideos = async () => {
     try {
         const response = await apiClient.get('/videos');
@@ -141,6 +141,7 @@ const getVideosData = async (videos) => {
     }
 }
 
+// Function to fetch all audio description for the provided videoId
 const getAudioDescriptions = async (videoId) => {
     try {
         const response = await apiClient.get(`/videos/${videoId}`);
