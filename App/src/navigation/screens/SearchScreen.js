@@ -1,7 +1,15 @@
 import RecentSearches from '../../components/RecentSearches';
+import SearchResults from '../../components/SearchResults';
 
-export default function SearchScreen() {
+import { useSearch } from '../../contexts/SearchContext';
+
+export default function SearchScreen({navigation}) {
+  const searchTerm = useSearch();
+
+  if(!searchTerm){
+    return ( <RecentSearches></RecentSearches> );
+  }
   return (
-    <RecentSearches></RecentSearches>
+    <SearchResults stackNavigation={navigation}></SearchResults>
   );
 }

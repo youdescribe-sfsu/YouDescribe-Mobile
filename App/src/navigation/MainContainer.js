@@ -1,32 +1,46 @@
-import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import { useEffect } from 'react';
+import { StyleSheet, Image } from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
+import { SearchProvider } from '../contexts/SearchContext';
+import { useUserUpdate, getUser } from '../contexts/UserContext';
+
 import SearchBar from '../components/SearchBar';
 
-//Screens
-import HomeScreen from './screens/HomeScreen';
-import SearchScreen from './screens/SearchScreen';
-import WishlistScreen from './screens/WishlistScreen';
-import MyDescriptionsScreen from './screens/MyDescriptionsScreen';
-import SettingsScreen from './screens/SettingsScreen';
+//Navigators
+import HomeScreenNavigator from './HomeScreenNavigator';
+import WishlistScreenNavigator from './WishlistScreenNavigator';
+import SearchScreenNavigator from './SearchScreenNavigator';
+import AccountScreenNavigator from './AccountScreenNavigator';
+import MyDescriptionsScreenNavigator from './MyDescriptionsScreenNavigator';
 
 //Screen Names
-const homeName = 'Home';
-const searchName = 'Search';
-const wishlistName = 'Wishlist';
-const myDescriptionsName = 'My Descriptions';
-const settingsName = 'Settings';
+const homeName = 'Home Navigator';
+const searchName = 'Search Navigator';
+const wishlistName = 'Wishlist Navigator';
+const myDescriptionsName = 'My Descriptions Navigator';
+const accountName = 'Account Navigator';
 
 const Tab = createBottomTabNavigator();
 
-export default function MainContainer() {
+export default function MainContainer({userInfo}) {
+
+  const updateUser = useUserUpdate();
+  const user = getUser();
+
+  useEffect(() => {
+    if(userInfo){
+      updateUser(userInfo);
+    }
+  },[]);
+
   return (
     <NavigationContainer>
+      <SearchProvider>
         <Tab.Navigator
             initialRouteName={homeName}
             screenOptions={({route}) => ({
@@ -41,12 +55,23 @@ export default function MainContainer() {
                     } else if (rn === wishlistName) {
                         iconName = focused ? 'heart' : 'heart-outline';
                     }else if (rn === myDescriptionsName) {
-                        return <FontAwesome5 name = 'audio-description' size = {size} color = {color} />
-                    } else if (rn === settingsName) {
-                        iconName = focused ? 'settings' : 'settings-outline';
+                        return <FontAwesome5 name = 'audio-description' size = {28} color = {color} />
+                    } else if (rn === accountName && !user) {
+                        iconName = focused ? 'person-circle' : 'person-circle-outline';
+                    } else if(rn === accountName && user) {
+                        if(focused){
+                          return <Image
+                                    source={{uri: user.picture}}
+                                    style={{width: 28, height: 28, borderRadius: 50, borderWidth: 2, borderColor: color}}
+                                  />
+                        }
+                        return <Image
+                                  source={{uri: user.picture}}
+                                  style={{width: 28, height: 28, borderRadius: 50}}
+                                />
                     }
 
-                    return <Ionicons name = {iconName} size = {size} color = {color} />
+                    return <Ionicons name = {iconName} size = {28} color = {color} />
                 },
                 tabBarStyle: styles.tabBar,
                 tabBarLabelStyle: styles.label,
@@ -56,46 +81,51 @@ export default function MainContainer() {
 
             <Tab.Screen
                 name={homeName}
-                component={HomeScreen}
+                component={HomeScreenNavigator}
                 options={{ title: 'YouDescribe',
                            tabBarLabel: 'Home',
-                           tabBarAccessibilityLabel: 'Recent Videos',
+                           tabBarAccessibilityLabel: 'Recent Videos. Tab 1 of 5',
+                           tabBarShowLabel: false
                         }}
             />
             <Tab.Screen
                 name={searchName}
-                component={SearchScreen}
-                options={{ headerTitle: () => <SearchBar></SearchBar>,
+                component={SearchScreenNavigator}
+                options={{ headerTitle: () => <SearchBar />,
                            tabBarLabel: 'Search',
-                           tabBarAccessibilityLabel: 'Search Videos',
+                           tabBarAccessibilityLabel: 'Search Videos. Tab 2 of 5',
+                           tabBarShowLabel: false
                         }}
             />
             <Tab.Screen
                 name={wishlistName}
-                component={WishlistScreen}
+                component={WishlistScreenNavigator}
                 options={{ title: 'Wishlist',
                            tabBarLabel: 'Wishlist',
-                           tabBarAccessibilityLabel: 'Wishlist',
+                           tabBarAccessibilityLabel: 'Wishlist. Tab 3 of 5',
+                           tabBarShowLabel: false
                         }}
             />
             <Tab.Screen
                 name={myDescriptionsName}
-                component={MyDescriptionsScreen}
+                component={MyDescriptionsScreenNavigator}
                 options={{ title: 'My Descriptions',
                            tabBarLabel: 'My Descriptions',
-                           tabBarAccessibilityLabel: 'My Descriptions',
+                           tabBarAccessibilityLabel: 'My Descriptions. Tab 4 of 5',
+                           tabBarShowLabel: false
                         }}
             />
             <Tab.Screen
-                name={settingsName}
-                component={SettingsScreen}
-                options={{ title: 'Settings',
-                           tabBarLabel: 'Settings',
-                           tabBarAccessibilityLabel: 'Help and Settings',
+                name={accountName}
+                component={AccountScreenNavigator}
+                options={{ title: 'Account',
+                           tabBarLabel: 'Account',
+                           tabBarAccessibilityLabel: 'Account, Help and Settings. Tab 5 of 5',
+                           tabBarShowLabel: false
                         }}
             />
-
         </Tab.Navigator>
+      </SearchProvider>
     </NavigationContainer>
   );
 }

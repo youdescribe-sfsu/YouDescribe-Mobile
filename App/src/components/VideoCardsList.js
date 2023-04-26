@@ -1,22 +1,17 @@
 import { StyleSheet, View, FlatList } from 'react-native';
-
 import VideoCard from './VideoCard';
-// Importing temporary data to create a basic UI component.
-// TODO: Fetch data from API to replace the temporary data.
-import { DATA } from '../navigation/tmp_data';
 
 export default function VideoCardsList(props) {
-
   const renderVideo = ({ item }) => (
-    <VideoCard video={item} buttons={props.buttons} />
+    <VideoCard video={item} buttons={props.buttons} navigation={props.navigation} />
   );
 
   return (
     <View style={styles.container}>
       <FlatList
-        data={DATA}
+        data={props.videos || []}
         renderItem={renderVideo}
-        keyExtractor={video => video.id}
+        keyExtractor={video => video.videoId}
         style={styles.videoList}
       />
     </View>

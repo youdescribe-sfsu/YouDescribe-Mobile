@@ -1,7 +1,20 @@
+import { useState, useEffect } from 'react';
 import VideoCardsList from "../../components/VideoCardsList";
 
-export default function WishlistScreen() {
+import wishlistApi from '../../api/wishlistApi';
+
+export default function WishlistScreen({ navigation }) {
+  const [videos, setVideos] = useState([]);
+  const getVideos = async() => {
+    const videos = await wishlistApi.getWishlistVideos();
+    setVideos(videos);
+  }
+
+  useEffect(() => {
+    getVideos();
+  },[]);
+
   return (
-    <VideoCardsList buttons= "upvote-describe"></VideoCardsList>
+    <VideoCardsList videos={videos} buttons= "upvote-describe" navigation={navigation}></VideoCardsList>
   );
 }
