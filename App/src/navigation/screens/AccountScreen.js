@@ -6,8 +6,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { getUser, useUserUpdate } from '../../contexts/UserContext';
-
 import UserInfo from '../../components/UserInfo';
+import { expoClientId, iosClientId, androidClientId, youDescribeApi } from '../../api/client';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -19,14 +19,14 @@ export default function AccountScreen({navigation}) {
 
   const [request, response, promptAsync] = Google.useAuthRequest({
     responseType: "id_token",
-    expoClientId: '1061361249208-9799kv6172rjgmk4gad077639dfrck82.apps.googleusercontent.com',
-    iosClientId: '3158679793-l94a8t4asb14ar54ud9a93164sulh56l.apps.googleusercontent.com',
-    androidClientId: '3158679793-rlr3itj0rt0j36eqt2tcucaslvl19oob.apps.googleusercontent.com'
+    expoClientId: expoClientId,
+    iosClientId: iosClientId,
+    androidClientId: androidClientId
   });
 
   const fetchUserInfo = async () => {
     try {
-      const userInfoResponse = await fetch('https://api.youdescribe.org/v1/auth', {
+      const userInfoResponse = await fetch(`${youDescribeApi}/auth`, {
         method: 'POST',
         body: JSON.stringify({ googleToken: idToken }),
         headers: { 'Content-Type': 'application/json' }

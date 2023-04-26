@@ -1,13 +1,25 @@
 import axios from 'axios';
+import {
+    YOUDESCRIBE_API,
+    YOUTUBE_API,
+    YOUTUBE_API_KEY,
+    AUDIO_CLIPS_UPLOADS_PATH,
+    EXPO_CLIENT_ID,
+    IOS_CLIENT_ID,
+    ANDROID_CLIENT_ID
+} from '@env';
 
 export const apiClient = axios.create({
-    // baseURL: 'http://localhost:8080/v1'
-    baseURL: 'https://api.youdescribe.org/v1'
+    baseURL: YOUDESCRIBE_API
 });
 
 export const youTubeApiClient = axios.create({
-    baseURL: 'https://www.googleapis.com/youtube/v3'
+    baseURL: YOUTUBE_API
 });
 
-export const youTubeApiKey = "AIzaSyDV8QMir3NE8S2jA1GyXvLXyTuSq72FPyE";
-export const audioClipsUploadsPath = "https://api.youdescribe.org/audio-descriptions-files";
+export const youDescribeApi = YOUDESCRIBE_API;
+export const youTubeApiKey = YOUTUBE_API_KEY;
+export const audioClipsUploadsPath = AUDIO_CLIPS_UPLOADS_PATH;
+export const expoClientId = EXPO_CLIENT_ID;
+export const iosClientId = IOS_CLIENT_ID;
+export const androidClientId = ANDROID_CLIENT_ID;
