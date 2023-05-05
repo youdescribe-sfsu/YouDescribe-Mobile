@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 
 import { getDescriptionActivity, setDescriptionActivity } from '../contexts/DescriptionActivityContext';
 
-export default function DescriptionOptions({ multipleDescriptions, showModal }) {
+export default function DescriptionOptions({ multipleDescriptions, showChangeDescriptionModal }) {
 
     const isDescriptionActive = getDescriptionActivity();
     const updateisDescriptionActive = setDescriptionActivity();
@@ -31,7 +31,7 @@ export default function DescriptionOptions({ multipleDescriptions, showModal }) 
                 </TouchableOpacity>
                 {
                     multipleDescriptions && 
-                    <TouchableOpacity style={styles.button} onPress={showModal}>
+                    <TouchableOpacity style={styles.button} onPress={showChangeDescriptionModal}>
                         <Text style={styles.buttonText}>Change Description</Text>
                     </TouchableOpacity>
                 }

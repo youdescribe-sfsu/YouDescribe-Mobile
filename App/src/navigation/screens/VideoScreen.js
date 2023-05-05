@@ -1,23 +1,27 @@
-import { View, StyleSheet, useWindowDimensions, Modal } from "react-native";
+import { View, StyleSheet, useWindowDimensions, Modal, Alert } from "react-native";
 import { useState, useEffect, useRef } from "react";
 import YoutubePlayer from 'react-native-youtube-iframe';
 import { Audio } from 'expo-av';
 
 import { audioClipsUploadsPath } from "../../api/client";
+import videosApi from "../../api/videosApi";
+import audioDescriptionsApi from "../../api/audioDescriptionsApi";
+
 import { getDescriptionActivity } from "../../contexts/DescriptionActivityContext";
+import { getUser } from "../../contexts/UserContext";
 
 import ChangeDescriptionModal from "../../components/ChangeDescriptionModal";
+import RateDescriptionModal from "../../components/RateDescriptionModal";
 import VideoInfo from "../../components/VideoInfo";
 import SelectedDescriptionBox from "../../components/SelectedDescriptionBox";
 import DescriptionOptions from "../../components/DescriptionOptions";
-
-import videosApi from "../../api/videosApi";
 
 export default function VideoScreen({ route }) {
     // console.log("Rerendered!!");
     const deviceWidth = useWindowDimensions().width;
     const isDescriptionActive = getDescriptionActivity();
     const video = route.params.video;
+    const user = getUser();
     const videoPlayerRef = useRef();
     const currentClipRef = useRef(null);
     const [audioDescriptions, setAudioDescriptions] = useState([]);
@@ -28,7 +32,10 @@ export default function VideoScreen({ route }) {
     const [audioClips, setAudioClips] = useState([]);
     const [isVideoPlaying, setIsVideoPlaying] = useState(false);
     const [progressWatcher, setProgressWatcher] = useState(null);
-    const [modalVisible, setModalVisible] = useState(false);
+    const [changeDescriptionModalVisible, setChangeDescriptionModalVisible] = useState(false);
+    const [rateDescriptionModalVisible, setRateDescriptionModalVisible] = useState(false);
+    const [starColors, setStarColors] = useState(['#787070','#787070','#787070','#787070','#787070']);
+    const [currentRating, setCurrentRating] = useState(0);
 
     const getAudioDescriptions = async () => {
         // console.log("getAudioDescriptions");
@@ -300,18 +307,75 @@ export default function VideoScreen({ route }) {
         }
     }
 
-    const showModal = () => {
-        setModalVisible(true);
+    const showChangeDescriptionModal = () => {
+        setChangeDescriptionModalVisible(true);
     }
 
-    const hideModal = async () => {
+    const hideChangeDescriptionModal = async () => {
         stopProgressWatcher();
         videoPlayerRef.current?.seekTo(0,true);
         if(currentClipRef.current){
             await currentClipRef.current.audio.stopAsync();
             currentClipRef.current = null;
         }
-        setModalVisible(false);
+        setChangeDescriptionModalVisible(false);
+    }
+
+    const showRateDescriptionModal = () => {
+        if(!user){
+            Alert.alert(
+                `Sign In Required`,
+                `You have to be logged in in order to rate a description`
+            );
+        } else {
+            setRateDescriptionModalVisible(true);
+        }
+    }
+
+    const hideRateDescriptionModal = () => {
+        setRateDescriptionModalVisible(false);
+    }
+
+    const handleRatingChange = (rating) => {
+        setCurrentRating(rating);
+        let colors = [];
+        for(let i = 1; i <= rating; i++){
+            colors.push('gold');
+        }
+        for(let i = 1; i <= 5-rating; i++){
+            colors.push('#787070');
+        }
+        setStarColors(colors);
+    }
+
+    const handleRatingSubmit = async () => {
+        const response = await audioDescriptionsApi.rateAudioDescription(currentRating, selectedAudioDescriptionId, user._id, user.token);
+        if(response && response.status === 200){
+            const describers = {...audioDescriptionsIdsUsers};
+            const selectedId = selectedAudioDescriptionId;
+            if (!describers[selectedId].overall_rating_votes_sum) {
+                describers[selectedId].overall_rating_votes_sum = 0;
+            }
+            if (!describers[selectedId].overall_rating_votes_counter) {
+                describers[selectedId].overall_rating_votes_counter = 0;
+            }
+            if (!describers[selectedId].overall_rating_average) {
+                describers[selectedId].overall_rating_average = 0;
+            }
+            describers[selectedId].overall_rating_votes_sum += currentRating;
+            describers[selectedId].overall_rating_votes_counter += 1;
+            describers[selectedId].overall_rating_average = describers[selectedId].overall_rating_votes_sum / describers[selectedId].overall_rating_votes_counter;
+            setAudioDescriptionsIdsUsers(describers);
+            Alert.alert(
+                `Thanks for your feedback!`
+            );
+        } else {
+            Alert.alert(
+                `Rating Description Unsuccessful`,
+                `There was a problem while rating the audio description. Try to logout and login again.`
+            );
+        }
+        hideRateDescriptionModal();
     }
 
     useEffect(() => {
@@ -340,22 +404,39 @@ export default function VideoScreen({ route }) {
                 onChangeState={onVPStateChange}
             />
             <VideoInfo video={video}/>
-            <SelectedDescriptionBox user={audioDescriptionsIdsUsers[selectedAudioDescriptionId]} />
+            <SelectedDescriptionBox
+                user={audioDescriptionsIdsUsers[selectedAudioDescriptionId]}
+                showRateDescriptionModal={showRateDescriptionModal}
+            />
             <DescriptionOptions
                 multipleDescriptions={audioDescriptions && audioDescriptions.length > 1}
-                showModal={showModal}
+                showChangeDescriptionModal={showChangeDescriptionModal}
             />
             <Modal
                 animationType="slide"
-                visible={modalVisible}
-                onRequestClose={() =>  setModalVisible(!modalVisible) }
+                visible={changeDescriptionModalVisible}
+                onRequestClose={() =>  setChangeDescriptionModalVisible(!changeDescriptionModalVisible) }
                 transparent={true}
             >
                 <ChangeDescriptionModal
-                    hideModal={hideModal}
+                    hideChangeDescriptionModal={hideChangeDescriptionModal}
                     describers={audioDescriptionsIdsUsers}
                     selectedAudioDescriptionId={selectedAudioDescriptionId}
                     setSelectedAudioDescriptionId={setSelectedAudioDescriptionId}
+                />
+            </Modal>
+            <Modal
+                animationType="slide"
+                visible={rateDescriptionModalVisible}
+                onRequestClose={() =>  setRateDescriptionModalVisible(!rateDescriptionModalVisible) }
+                transparent={true}
+            >
+                <RateDescriptionModal
+                    hideRateDescriptionModal={hideRateDescriptionModal}
+                    handleRatingSubmit={handleRatingSubmit}
+                    handleRatingChange={handleRatingChange}
+                    starColors={starColors}
+                    currentRating={currentRating}
                 />
             </Modal>
         </View>

@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from "react-native";
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
-export default function ChangeDescriptionModal({ hideModal, describers, selectedAudioDescriptionId, setSelectedAudioDescriptionId }) {
+export default function ChangeDescriptionModal({ hideChangeDescriptionModal, describers, selectedAudioDescriptionId, setSelectedAudioDescriptionId }) {
 
     const describersArray = [];
     for(const key in describers){
@@ -13,7 +13,7 @@ export default function ChangeDescriptionModal({ hideModal, describers, selected
 
     const changeSelectedDescription = (adId) => {
         setSelectedAudioDescriptionId(adId);
-        hideModal();
+        hideChangeDescriptionModal();
     }
 
     const renderDescriberInfo = ({item}) => {

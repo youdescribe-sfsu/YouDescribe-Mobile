@@ -3,9 +3,9 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import { getDescriptionActivity } from '../contexts/DescriptionActivityContext';
 
-export default function SelectedDescriptionBox(props) {
+export default function SelectedDescriptionBox({ user, showRateDescriptionModal }) {
     const isDescriptionActive = getDescriptionActivity();
-    let describer = props.user;
+    let describer = user;
     if(describer && isDescriptionActive){
         const rating = describer.overall_rating_average === undefined ? 0 : describer.overall_rating_average;
         const starColors = [];
@@ -39,7 +39,7 @@ export default function SelectedDescriptionBox(props) {
                         </View>
                     </View>
                 </View>
-                <TouchableOpacity style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.buttonContainer} onPress={showRateDescriptionModal}>
                     <View style={styles.button}>
                         <Text style={styles.buttonText}>Rate Description</Text>
                     </View>
