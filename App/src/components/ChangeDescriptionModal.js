@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     describerImage: {
         width: 60,
         height: 60,
-        borderRadius: '50%'
+        borderRadius: 30
     },
     describerName:{
         fontSize: 14,

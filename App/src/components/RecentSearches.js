@@ -9,7 +9,7 @@ export default function RecentSearches() {
 
   const renderSearchPhrase = ({ item }) => (
     <View style={styles.searchPhrase}>
-        <FontAwesome5 name='history' size='20px'/>
+        <FontAwesome5 name='history' size={20}/>
         <Text style={styles.searchPhraseText}>{item.phrase}</Text>
     </View>
   );
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
   },
   searchPhraseText: {
     fontWeight: 'bold', 
-    fontSize: '16px',
+    fontSize: 16,
     marginLeft: 30
   }
 });

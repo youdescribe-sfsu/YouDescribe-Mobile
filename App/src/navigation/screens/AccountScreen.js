@@ -84,6 +84,18 @@ export default function AccountScreen({navigation}) {
     );
   }
 
+  const openHelpAndSupport = () => {
+    navigation.navigate('Help And Support');
+  }
+
+  const openCredits = () => {
+    navigation.navigate('Credits');
+  }
+
+  const openContactUs = () => {
+    navigation.navigate('Contact Us');
+  }
+
   useEffect(() => {
     if (response?.type === 'success') {
       setIdToken(response.params.id_token);
@@ -97,19 +109,19 @@ export default function AccountScreen({navigation}) {
     <View style={styles.container} >
       <UserInfo loginUser={loginUser} logoutUser={logoutUser}/>
       <View style={styles.accountOptions}>
-        <TouchableOpacity onPress={fetchUserInfo}>
+        <TouchableOpacity onPress={openHelpAndSupport}>
           <View style={styles.accountOption}>
             <Ionicons name = 'help-circle' size = '22' color = '#000' />
             <Text style={styles.accountOptionText}>Help And Support</Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => logoutUser(false)}>
+        <TouchableOpacity onPress={openCredits}>
           <View style={styles.accountOption}>
             <Ionicons name = 'people' size = '22' color = '#000' />
-            <Text style={styles.accountOptionText}>About Us</Text>
+            <Text style={styles.accountOptionText}>Credits</Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => logoutUser(false)}>
+        <TouchableOpacity onPress={openContactUs}>
           <View style={styles.accountOption}>
             <Ionicons name = 'mail' size = '22' color = '#000' />
             <Text style={styles.accountOptionText}>Contact Us</Text>

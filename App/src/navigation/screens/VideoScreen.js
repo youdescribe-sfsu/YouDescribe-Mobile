@@ -1,7 +1,9 @@
-import { View, StyleSheet, useWindowDimensions, Modal, Alert } from "react-native";
+import { View, StyleSheet, useWindowDimensions, Modal, Alert, Pressable, Text, TouchableOpacity } from "react-native";
 import { useState, useEffect, useRef } from "react";
 import YoutubePlayer from 'react-native-youtube-iframe';
+import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import { Audio } from 'expo-av';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import { audioClipsUploadsPath } from "../../api/client";
 import videosApi from "../../api/videosApi";
@@ -36,6 +38,7 @@ export default function VideoScreen({ route }) {
     const [rateDescriptionModalVisible, setRateDescriptionModalVisible] = useState(false);
     const [starColors, setStarColors] = useState(['#787070','#787070','#787070','#787070','#787070']);
     const [currentRating, setCurrentRating] = useState(0);
+    const [currentDescriptionVolume, setCurrentDescriptionVolume] = useState(10);
 
     const getAudioDescriptions = async () => {
         // console.log("getAudioDescriptions");
@@ -116,7 +119,8 @@ export default function VideoScreen({ route }) {
                 const source = { uri: clip.url };
                 const initialStatus = {
                     shouldPlay: false,
-                    isMuted: false
+                    isMuted: false,
+                    volume: currentDescriptionVolume/10
                 };
                 const { sound } = await Audio.Sound.createAsync(source, initialStatus, handleClipUpdates);
                 clip.sound = sound;
@@ -153,7 +157,7 @@ export default function VideoScreen({ route }) {
                 break;
             case "buffering":
                 if(currentClipRef.current && currentClipRef.current.playbackType !== "extended"){
-                    currentClipRef.current.audio.stop();
+                    await currentClipRef.current.audio.stopAsync();
                     currentClipRef.current = null;
                 }
                 break;
@@ -244,6 +248,7 @@ export default function VideoScreen({ route }) {
                 if(audioClip.playback_type === "extended"){
                     setIsVideoPlaying(false);
                 }
+                await audioClip.sound.setVolumeAsync(currentDescriptionVolume/10);
                 await audioClip.sound.playAsync();
             }
         } catch (error) {
@@ -378,6 +383,20 @@ export default function VideoScreen({ route }) {
         hideRateDescriptionModal();
     }
 
+    const incrementDescriptionVolume = () => {
+        setCurrentDescriptionVolume(currentDescriptionVolume + 1);
+    }
+
+    const decrementDescriptionVolume = () => {
+        setCurrentDescriptionVolume(currentDescriptionVolume - 1);
+    }
+
+    const updateDescriptionVolume = async () => {
+        if(currentClipRef.current){
+            await currentClipRef.current.audio.setVolumeAsync(currentDescriptionVolume/10);
+        }
+    }
+
     useEffect(() => {
         getAudioDescriptions();
     }, []);
@@ -394,6 +413,10 @@ export default function VideoScreen({ route }) {
         preLoadAudioClips();
     }, [selectedAudioDescriptionId]);
 
+    useEffect(() => {
+        updateDescriptionVolume();
+    }, [currentDescriptionVolume]);
+
     return (
         <View style={styles.container}>
             <YoutubePlayer
@@ -403,6 +426,28 @@ export default function VideoScreen({ route }) {
                 videoId={video.videoId}
                 onChangeState={onVPStateChange}
             />
+            <View style={styles.sliderContainerView}>
+                <Text style={{color: '#fff', fontSize: 16}}>Description Volume</Text>
+                <View style={styles.descriptionVolume}>
+                    <Pressable
+                        style={styles.descriptionVolumeBtn}
+                        onPress={decrementDescriptionVolume}
+                        disabled={currentDescriptionVolume <= 0}
+                    >
+                        <FontAwesome5 name = 'minus' size = {16} color = {'#384488'} />
+                    </Pressable>
+                    <Text style={styles.descriptionVolumeText}>
+                        {currentDescriptionVolume}
+                    </Text>
+                    <Pressable
+                        style={styles.descriptionVolumeBtn}
+                        onPress={incrementDescriptionVolume}
+                        disabled={currentDescriptionVolume >= 10}
+                    >
+                        <FontAwesome5 name = 'plus' size = {16} color = {'#384488'} />
+                    </Pressable>
+                </View>
+            </View>
             <VideoInfo video={video}/>
             <SelectedDescriptionBox
                 user={audioDescriptionsIdsUsers[selectedAudioDescriptionId]}
@@ -445,12 +490,44 @@ export default function VideoScreen({ route }) {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        display: 'flex',
         justifyContent: 'flex-start'
     },
     modalView: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    sliderContainer: {
+        backgroundColor: '#000',
+        paddingHorizontal: 15,
+        height: 40
+    },
+    sliderContainerView: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        height: 50,
+        backgroundColor: '#000',
+        paddingHorizontal: 15,
+    },
+    descriptionVolume: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: 125,
+        marginRight: 15
+    },
+    descriptionVolumeBtn: {
+        borderRadius: 5,
+        backgroundColor: '#fff',
+        padding: 5
+    },
+    descriptionVolumeText: {
+        color: '#fff',
+        fontSize: 20,
+        fontWeight: 'bold'
     }
 });

@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   label: {
-    fontSize: '9px',
+    fontSize: 9,
     fontWeight: '700'
   },
   tabBar: {

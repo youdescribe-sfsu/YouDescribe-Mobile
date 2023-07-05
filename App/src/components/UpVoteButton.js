@@ -41,7 +41,7 @@ export default function UpVoteButton({youtubeId}) {
 
     return (
         <TouchableOpacity onPress={upvote}>
-            <Ionicons name={iconName} size="25px" color="#384488" ></Ionicons>
+            <Ionicons name={iconName} size={25} color="#384488" ></Ionicons>
         </TouchableOpacity>
     );
 }

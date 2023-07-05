@@ -75,14 +75,14 @@ const styles = StyleSheet.create({
     card: {
       width: '100%',
       height: 90,
-      borderRadius: '10px',
+      borderRadius: 10,
       marginBottom: 5,
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
       borderBottomColor: '#edebeb',
-      borderBottomWidth: '2px'
+      borderBottomWidth: 2
     },
     video: {
         display: 'flex',
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
     thumbnail: {
         height: '100%',
         width: '35%',
-        borderRadius: '10px',
+        borderRadius: 10,
         backgroundColor: '#000',
         overflow: 'hidden',
         marginTop: 2,
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0,0,0,0.8)',
         color: '#fff',
         padding: 2,
-        borderRadius: '3px'
+        borderRadius: 3
     },
     videoInfo: {
         display: 'flex',

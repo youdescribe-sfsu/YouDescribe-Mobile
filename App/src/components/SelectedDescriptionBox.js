@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     describerImage: {
         width: 60,
         height: 60,
-        borderRadius: '50%'
+        borderRadius: 30
     },
     describerName:{
         fontSize: 16,
@@ -105,6 +105,6 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#fff',
         fontWeight: 'bold',
-        fontSize: '16px'
+        fontSize: 16
     }
 });
