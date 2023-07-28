@@ -1,7 +1,7 @@
 import { View, StyleSheet, useWindowDimensions, Modal, Alert, Pressable, Text, TouchableOpacity } from "react-native";
 import { useState, useEffect, useRef } from "react";
 import YoutubePlayer from 'react-native-youtube-iframe';
-import MultiSlider from '@ptomasroos/react-native-multi-slider';
+// import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import { Audio } from 'expo-av';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
@@ -19,7 +19,7 @@ import SelectedDescriptionBox from "../../components/SelectedDescriptionBox";
 import DescriptionOptions from "../../components/DescriptionOptions";
 
 export default function VideoScreen({ route }) {
-    // console.log("Rerendered!!");
+    console.log("Rerendered!!");
     const deviceWidth = useWindowDimensions().width;
     const isDescriptionActive = getDescriptionActivity();
     const video = route.params.video;
@@ -41,13 +41,13 @@ export default function VideoScreen({ route }) {
     const [currentDescriptionVolume, setCurrentDescriptionVolume] = useState(10);
 
     const getAudioDescriptions = async () => {
-        // console.log("getAudioDescriptions");
+        console.log("getAudioDescriptions");
         const audioDescriptions = await videosApi.getAudioDescriptions(video.videoId);
         setAudioDescriptions(audioDescriptions);
     }
 
     const parseAudioDescriptions = () => {
-        // console.log("parseAudioDescriptions");
+        console.log("parseAudioDescriptions");
         if (audioDescriptions) {
             const adIds = [];
             const adIdsUsers = {};
@@ -76,7 +76,7 @@ export default function VideoScreen({ route }) {
     }
 
     const getHighestRatingADId = () => {
-        // console.log("getHighestRatingADId");
+        console.log("getHighestRatingADId");
         let selectedId = null;
         if(audioDescriptions){
             selectedId = audioDescriptionsIds[0];
@@ -95,7 +95,7 @@ export default function VideoScreen({ route }) {
     }
 
     const setAudioDescriptionActive = () => {
-        // console.log("setAudioDescritionActive");
+        console.log("setAudioDescritionActive");
         if(!selectedAudioDescriptionId){
             let adId = getHighestRatingADId();
             if(audioDescriptionsIds.length > 0 && audioDescriptionsIds.indexOf(adId) === -1){
@@ -106,7 +106,7 @@ export default function VideoScreen({ route }) {
     }
 
     const preLoadAudioClips = () => {
-        // console.log("preLoadAudioClips");
+        console.log("preLoadAudioClips");
         let clips = [];
         if(audioDescriptionsIdsAudioClips
            && selectedAudioDescriptionId
@@ -122,19 +122,20 @@ export default function VideoScreen({ route }) {
                     isMuted: false,
                     volume: currentDescriptionVolume/10
                 };
+                await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
                 const { sound } = await Audio.Sound.createAsync(source, initialStatus, handleClipUpdates);
                 clip.sound = sound;
             } catch (e) {
                 console.error(e);
             }
         });
-        // console.log("Number of Audio Clips: ", clips.length);
-        // console.log("Setting audio clips");
+        console.log("Number of Audio Clips: ", clips.length);
+        console.log("Setting audio clips");
         setAudioClips(clips);
     }
 
     const onVPStateChange = async (event) => {
-        // console.log("onVPStateChange");
+        console.log("onVPStateChange");
         switch(event){
             case "playing":
                 setIsVideoPlaying(true);
@@ -166,10 +167,10 @@ export default function VideoScreen({ route }) {
         }
     }
 
-    const checkSeek = () => {
-        // console.log("checkSeek");
+    const checkSeek = async () => {
+        console.log("checkSeek");
         if(selectedAudioDescriptionId && currentClipRef.current){
-            currentClipRef.current.audio.stop();
+            await currentClipRef.current.audio.stopAsync();
             currentClipRef.current = null;
         }
         let videoTimestamp;
@@ -196,7 +197,7 @@ export default function VideoScreen({ route }) {
     }
 
     const startProgressWatcher = () => {
-        // console.log("startProgressWatcher");
+        console.log("startProgressWatcher");
         if(selectedAudioDescriptionId){
             const interval = 141;
             if(progressWatcher){
@@ -222,7 +223,7 @@ export default function VideoScreen({ route }) {
     }
 
     const stopProgressWatcher = () => {
-        // console.log("stopProgressWatcher");
+        console.log("stopProgressWatcher");
         if(progressWatcher){
             clearInterval(progressWatcher);
             setProgressWatcher(null);
@@ -231,10 +232,10 @@ export default function VideoScreen({ route }) {
 
     const playAudioClip = async (audioClip, idx, timestamp = null) => {
         try {
-            // console.log("playAudioClip");
-            // console.log("Audio Clip Type: ",audioClip.playback_type);
-            // console.log("Audio Clip Duration: ", parseInt(audioClip.duration*1000));
-            // console.log("Audio Clip Start Time: ", audioClip.start_time);
+            console.log("playAudioClip");
+            console.log("Audio Clip Type: ",audioClip.playback_type);
+            console.log("Audio Clip Duration: ", parseInt(audioClip.duration*1000));
+            console.log("Audio Clip Start Time: ", audioClip.start_time);
             if(currentClipRef.current === null){
                 currentClipRef.current = {
                     audio: audioClip.sound,
@@ -258,7 +259,7 @@ export default function VideoScreen({ route }) {
 
     const pauseAudioClips = async () => {
         try {
-            // console.log("pauseAudioClips");
+            console.log("pauseAudioClips");
             if(currentClipRef.current){
                 if(currentClipRef.current.playbackType === 'inline'){
                     await currentClipRef.current.audio.stopAsync();
@@ -274,16 +275,16 @@ export default function VideoScreen({ route }) {
 
     let prevTimestamp = -1;
     const handleClipUpdates = async (status) => {
-        // console.log("handleClipUpdates");
+        console.log("handleClipUpdates");
         if(status.isLoaded){
             if(status.isPlaying){
-                // console.log("Audio Clip is Playing");
-                // console.log("Audio Clip current timestamp: ",status.positionMillis/1000);
+                console.log("Audio Clip is Playing");
+                console.log("Audio Clip current timestamp: ",status.positionMillis/1000);
                 // Manually checking if the audio clip has finished playing
                 // because for some clips, when they finish playing, the status doesn't change automatically
                 if(status.positionMillis === prevTimestamp &&
                    status.positionMillis === parseInt(currentClipRef.current.duration*1000)){
-                    // console.log("Finished Playing Manually");
+                    console.log("Finished Playing Manually");
                     if(currentClipRef.current){
                         if(currentClipRef.current.playbackType === 'extended'){
                             setIsVideoPlaying(true);
@@ -297,7 +298,7 @@ export default function VideoScreen({ route }) {
             } else if(status.isBuffering){
                 console.log("Audio Clip Buffering");
             } else if(status.didJustFinish){
-                // console.log("Finished Playing Automatically");
+                console.log("Finished Playing Automatically");
                 if(currentClipRef.current){
                     if(currentClipRef.current.playbackType === 'extended'){
                         setIsVideoPlaying(true);
@@ -454,7 +455,7 @@ export default function VideoScreen({ route }) {
                 showRateDescriptionModal={showRateDescriptionModal}
             />
             <DescriptionOptions
-                multipleDescriptions={audioDescriptions && audioDescriptions.length > 1}
+                numberOfDescriptions={audioDescriptions ? audioDescriptions.length : 0}
                 showChangeDescriptionModal={showChangeDescriptionModal}
             />
             <Modal

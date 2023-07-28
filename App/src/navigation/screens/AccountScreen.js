@@ -17,8 +17,8 @@ export default function AccountScreen({navigation}) {
   const updateUser = useUserUpdate();
   const [idToken, setIdToken] = useState(null);
 
-  const [request, response, promptAsync] = Google.useAuthRequest({
-    responseType: "id_token",
+  const [request, fullResult, promptAsync] = Google.useIdTokenAuthRequest({
+    // responseType: "id_token",
     expoClientId: expoClientId,
     iosClientId: iosClientId,
     androidClientId: androidClientId
@@ -77,7 +77,7 @@ export default function AccountScreen({navigation}) {
     return(
       <TouchableOpacity onPress={() => logoutUser(false)}>
         <View style={styles.logoutBtn}>
-          <Ionicons name = 'log-out-outline' size = '28' color = '#db411a' />
+          <Ionicons name = 'log-out-outline' size = {28} color = '#db411a' />
           <Text style={styles.logoutBtnText}>Sign Out</Text>
         </View>
       </TouchableOpacity>
@@ -97,13 +97,13 @@ export default function AccountScreen({navigation}) {
   }
 
   useEffect(() => {
-    if (response?.type === 'success') {
-      setIdToken(response.params.id_token);
+    if (fullResult?.type === 'success') {
+      setIdToken(fullResult.params.id_token);
       if(idToken){
         fetchUserInfo();
       }
     }
-  }, [response, idToken]);
+  }, [fullResult, idToken]);
 
   return(
     <View style={styles.container} >
@@ -111,19 +111,19 @@ export default function AccountScreen({navigation}) {
       <View style={styles.accountOptions}>
         <TouchableOpacity onPress={openHelpAndSupport}>
           <View style={styles.accountOption}>
-            <Ionicons name = 'help-circle' size = '22' color = '#000' />
+            <Ionicons name = 'help-circle' size = {22} color = '#000' />
             <Text style={styles.accountOptionText}>Help And Support</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity onPress={openCredits}>
           <View style={styles.accountOption}>
-            <Ionicons name = 'people' size = '22' color = '#000' />
+            <Ionicons name = 'people' size = {22} color = '#000' />
             <Text style={styles.accountOptionText}>Credits</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity onPress={openContactUs}>
           <View style={styles.accountOption}>
-            <Ionicons name = 'mail' size = '22' color = '#000' />
+            <Ionicons name = 'mail' size = {22} color = '#000' />
             <Text style={styles.accountOptionText}>Contact Us</Text>
           </View>
         </TouchableOpacity>
