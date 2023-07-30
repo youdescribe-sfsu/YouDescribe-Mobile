@@ -12,10 +12,9 @@ export function useSearchUpdate() {
 }
 
 export function SearchProvider({children}) {
-    const [searchTerm, setSearchTerm] = useState();
+    const [searchTerm, setSearchTerm] = useState(null);
 
     const updateSearchTerm = (term) => {
-        term = term.toUpperCase();
         setSearchTerm(term);
     }
 

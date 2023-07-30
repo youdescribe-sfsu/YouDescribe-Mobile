@@ -6,7 +6,7 @@ import { useSearch } from '../../contexts/SearchContext';
 export default function SearchScreen({navigation}) {
   const searchTerm = useSearch();
 
-  if(!searchTerm){
+  if(searchTerm === null){
     return ( <RecentSearches></RecentSearches> );
   }
   return (

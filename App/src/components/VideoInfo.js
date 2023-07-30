@@ -11,8 +11,14 @@ export default function VideoInfo(props) {
                 <Text accessibilityLabel={`Published on ${props.video.publishedAt}`}>{props.video.publishedAt}</Text>
             </View>
             <View style={styles.viewsLikes}>
-                <Text><FontAwesome5 name = 'eye' size = {14} /> {props.video.views}</Text>
-                <Text accessibilityLabel={`${props.video.likes} likes`}><FontAwesome5 name = 'thumbs-up' size = {14} /> {props.video.likes}</Text>
+                {
+                    props.video.views !== 'undefined' &&
+                    <Text><FontAwesome5 name = 'eye' size = {14} />{props.video.views}</Text>
+                }
+                {
+                    props.video.likes !== 'undefined' &&
+                    <Text accessibilityLabel={`${props.video.likes} likes`} ><FontAwesome5 name = 'thumbs-up' size = {14} /> {props.video.likes}</Text>
+                }
             </View>
         </View>
     );

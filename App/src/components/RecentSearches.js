@@ -1,23 +1,46 @@
-import { StyleSheet, View, FlatList, Text, Keyboard } from 'react-native';
+import { StyleSheet, View, FlatList, Text, Keyboard, TouchableOpacity } from 'react-native';
+import { useState, useEffect } from 'react';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Importing temporary data to create a basic UI component.
-// TODO: Fetch data from API to replace the temporary data.
-import { Recent_Searches } from '../navigation/tmp_data';
+import { useSearchUpdate } from "../contexts/SearchContext";
 
 export default function RecentSearches() {
 
+  const updateSearchTerm = useSearchUpdate();
+  const [recentSearches, setRecentSearches] = useState(null);
+
   const renderSearchPhrase = ({ item }) => (
-    <View style={styles.searchPhrase}>
+    <TouchableOpacity style={styles.searchPhrase} onPress={() => updateSearchTerm(item.phrase)}>
         <FontAwesome5 name='history' size={20}/>
         <Text style={styles.searchPhraseText}>{item.phrase}</Text>
-    </View>
+    </TouchableOpacity>
   );
+
+  const fetchRecentSearches = async () => {
+    let searches = await AsyncStorage.getItem("recentSearches");
+    if(searches){
+      searches = JSON.parse(searches);
+    } else {
+      searches = [];
+    }
+    setRecentSearches(searches);
+  }
+
+  useEffect(() => {
+    fetchRecentSearches();
+  }, []);
+
+  if(recentSearches === null){
+    return (
+      <View></View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <FlatList
-        data={Recent_Searches}
+        data={recentSearches || []}
         renderItem={renderSearchPhrase}
         keyExtractor={search => search.id}
         style={styles.recentSearchList}
