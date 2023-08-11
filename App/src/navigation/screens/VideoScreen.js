@@ -48,6 +48,7 @@ export default function VideoScreen({ route }) {
 
     const parseAudioDescriptions = () => {
         console.log("parseAudioDescriptions");
+        console.log("Audio Descriptions: ", audioDescriptions);
         if (audioDescriptions) {
             const adIds = [];
             const adIdsUsers = {};
@@ -130,12 +131,13 @@ export default function VideoScreen({ route }) {
             }
         });
         console.log("Number of Audio Clips: ", clips.length);
+        clips.forEach((clip, idx) => console.log(idx, clip.start_time));
         console.log("Setting audio clips");
         setAudioClips(clips);
     }
 
     const onVPStateChange = async (event) => {
-        console.log("onVPStateChange");
+        // console.log("onVPStateChange");
         switch(event){
             case "playing":
                 setIsVideoPlaying(true);
@@ -197,9 +199,9 @@ export default function VideoScreen({ route }) {
     }
 
     const startProgressWatcher = () => {
-        console.log("startProgressWatcher");
+        // console.log("startProgressWatcher");
         if(selectedAudioDescriptionId){
-            const interval = 141;
+            const interval = 50;
             if(progressWatcher){
                 stopProgressWatcher();
             }
@@ -223,7 +225,7 @@ export default function VideoScreen({ route }) {
     }
 
     const stopProgressWatcher = () => {
-        console.log("stopProgressWatcher");
+        // console.log("stopProgressWatcher");
         if(progressWatcher){
             clearInterval(progressWatcher);
             setProgressWatcher(null);
@@ -232,7 +234,8 @@ export default function VideoScreen({ route }) {
 
     const playAudioClip = async (audioClip, idx, timestamp = null) => {
         try {
-            console.log("playAudioClip");
+            console.log("playAudioClip Idx:", idx);
+            // console.log("Sound: ", audioClip.sound);
             console.log("Audio Clip Type: ",audioClip.playback_type);
             console.log("Audio Clip Duration: ", parseInt(audioClip.duration*1000));
             console.log("Audio Clip Start Time: ", audioClip.start_time);
@@ -249,8 +252,9 @@ export default function VideoScreen({ route }) {
                 if(audioClip.playback_type === "extended"){
                     setIsVideoPlaying(false);
                 }
-                await audioClip.sound.setVolumeAsync(currentDescriptionVolume/10);
+                // await audioClip.sound.setVolumeAsync(currentDescriptionVolume/10);
                 await audioClip.sound.playAsync();
+                updateDescriptionVolume();
             }
         } catch (error) {
             console.log(error);
@@ -275,7 +279,7 @@ export default function VideoScreen({ route }) {
 
     let prevTimestamp = -1;
     const handleClipUpdates = async (status) => {
-        console.log("handleClipUpdates");
+        // console.log("handleClipUpdates");
         if(status.isLoaded){
             if(status.isPlaying){
                 console.log("Audio Clip is Playing");
@@ -427,28 +431,32 @@ export default function VideoScreen({ route }) {
                 videoId={video.videoId}
                 onChangeState={onVPStateChange}
             />
-            <View style={styles.sliderContainerView}>
-                <Text style={{color: '#fff', fontSize: 16}}>Description Volume</Text>
-                <View style={styles.descriptionVolume}>
-                    <Pressable
-                        style={styles.descriptionVolumeBtn}
-                        onPress={decrementDescriptionVolume}
-                        disabled={currentDescriptionVolume <= 0}
-                    >
-                        <FontAwesome5 name = 'minus' size = {16} color = {'#384488'} />
-                    </Pressable>
-                    <Text style={styles.descriptionVolumeText}>
-                        {currentDescriptionVolume}
-                    </Text>
-                    <Pressable
-                        style={styles.descriptionVolumeBtn}
-                        onPress={incrementDescriptionVolume}
-                        disabled={currentDescriptionVolume >= 10}
-                    >
-                        <FontAwesome5 name = 'plus' size = {16} color = {'#384488'} />
-                    </Pressable>
+            {
+                audioDescriptions &&
+                audioDescriptions.length > 0 &&
+                <View style={styles.sliderContainerView}>
+                    <Text style={{color: '#fff', fontSize: 16}}>Description Volume</Text>
+                    <View style={styles.descriptionVolume}>
+                        <Pressable
+                            style={styles.descriptionVolumeBtn}
+                            onPress={decrementDescriptionVolume}
+                            disabled={currentDescriptionVolume <= 0}
+                        >
+                            <FontAwesome5 name = 'minus' size = {16} color = {'#384488'} />
+                        </Pressable>
+                        <Text style={styles.descriptionVolumeText}>
+                            {currentDescriptionVolume}
+                        </Text>
+                        <Pressable
+                            style={styles.descriptionVolumeBtn}
+                            onPress={incrementDescriptionVolume}
+                            disabled={currentDescriptionVolume >= 10}
+                        >
+                            <FontAwesome5 name = 'plus' size = {16} color = {'#384488'} />
+                        </Pressable>
+                    </View>
                 </View>
-            </View>
+            }
             <VideoInfo video={video}/>
             <SelectedDescriptionBox
                 user={audioDescriptionsIdsUsers[selectedAudioDescriptionId]}

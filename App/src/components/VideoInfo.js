@@ -13,7 +13,7 @@ export default function VideoInfo(props) {
             <View style={styles.viewsLikes}>
                 {
                     props.video.views !== 'undefined' &&
-                    <Text><FontAwesome5 name = 'eye' size = {14} />{props.video.views}</Text>
+                    <Text><FontAwesome5 name = 'eye' size = {14} /> {props.video.views}</Text>
                 }
                 {
                     props.video.likes !== 'undefined' &&
