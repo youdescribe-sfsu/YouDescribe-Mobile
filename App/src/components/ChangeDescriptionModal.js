@@ -32,6 +32,7 @@ export default function ChangeDescriptionModal({ hideChangeDescriptionModal, des
                     changeSelectedDescription(item.descriptionId);
                 }}
                 accessibilityLabel={`Description by ${item.name}. Rated ${item.overall_rating_average} stars out of 5.`}
+                accessibilityHint={`Double tap to select this audio description.`}
             >
                 <Image
                     source={{uri: item.picture}}

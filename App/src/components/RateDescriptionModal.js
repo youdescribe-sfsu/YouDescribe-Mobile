@@ -14,31 +14,66 @@ export default function RateDescriptionModal({ hideRateDescriptionModal, handleR
                 </View>
                 <Text style={styles.modalText}>Please rate this description with 1 star being unusable and 5 stars being perfect</Text>
                 <View style={styles.stars}>
-                    <TouchableOpacity onPress={() => { handleRatingChange(1) }}>
+                    <TouchableOpacity
+                        onPress={() => { handleRatingChange(1) }}
+                        accessibilityLabel={`1 star`}
+                        accessibilityRole="button"
+                        accessibilityHint={`Double tap to select one star out of five.`}
+                    >
                         <FontAwesome5 name='star' size={22} color={starColors[0]} solid/>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => { handleRatingChange(2) }}>
+                    <TouchableOpacity
+                        onPress={() => { handleRatingChange(2) }}
+                        accessibilityLabel={`2 stars`}
+                        accessibilityRole="button"
+                        accessibilityHint={`Double tap to select two stars out of five.`}
+                    >
                         <FontAwesome5 name='star' size={22} color={starColors[1]} solid/>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => { handleRatingChange(3) }}>
+                    <TouchableOpacity
+                        onPress={() => { handleRatingChange(3) }}
+                        accessibilityLabel={`3 stars`}
+                        accessibilityRole="button"
+                        accessibilityHint={`Double tap to select three stars out of five.`}
+                    >
                         <FontAwesome5 name='star' size={22} color={starColors[2]} solid/>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => { handleRatingChange(4) }}>
+                    <TouchableOpacity
+                        onPress={() => { handleRatingChange(4) }}
+                        accessibilityLabel={`4 stars`}
+                        accessibilityRole="button"
+                        accessibilityHint={`Double tap to select four stars out of five.`}
+                    >
                         <FontAwesome5 name='star' size={22} color={starColors[3]} solid/>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => { handleRatingChange(5) }}>
+                    <TouchableOpacity
+                        onPress={() => { handleRatingChange(5) }}
+                        accessibilityLabel={`5 star`}
+                        accessibilityRole="button"
+                        accessibilityHint={`Double tap to select five stars out of five.`}
+                    >
                         <FontAwesome5 name='star' size={22} color={starColors[4]} solid/>
                     </TouchableOpacity>
                 </View>
                 {
                     currentRating > 0 &&
-                    <Pressable style={styles.submitBtn} onPress={handleRatingSubmit}>
+                    <Pressable
+                        style={styles.submitBtn}
+                        onPress={handleRatingSubmit}
+                        accessibilityRole="button"
+                        accessibilityHint={`Double tap to submit your rating for this audio description as ${currentRating} stars out of five.`}
+                    >
                         <Text style={styles.submitBtnText}>Submit</Text>
                     </Pressable>
                 }
                 {
                     currentRating === 0 &&
-                    <Pressable style={[styles.submitBtn, {opacity: 0.5}]} disabled={true}>
+                    <Pressable
+                        style={[styles.submitBtn, {opacity: 0.5}]}
+                        disabled={true}
+                        accessibilityRole="button"
+                        accessibilityHint="Please select a rating in order to submit."
+                    >
                         <Text style={styles.submitBtnText}>Submit</Text>
                     </Pressable>
                 }

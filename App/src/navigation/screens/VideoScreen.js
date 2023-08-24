@@ -435,22 +435,36 @@ export default function VideoScreen({ route }) {
                 audioDescriptions &&
                 audioDescriptions.length > 0 &&
                 <View style={styles.sliderContainerView}>
-                    <Text style={{color: '#fff', fontSize: 16}}>Description Volume</Text>
+                    <Text
+                        style={{color: '#fff', fontSize: 16}}
+                        accessibilityLabel={`Description Volume. Currently set to ${currentDescriptionVolume}`}
+                    >
+                        Description Volume
+                    </Text>
                     <View style={styles.descriptionVolume}>
                         <Pressable
                             style={styles.descriptionVolumeBtn}
                             onPress={decrementDescriptionVolume}
                             disabled={currentDescriptionVolume <= 0}
+                            accessibilityLabel="Decrease Description Volume."
+                            accessibilityRole="button"
+                            accessibilityHint="Click to decrease the description volume by 1."
                         >
                             <FontAwesome5 name = 'minus' size = {16} color = {'#384488'} />
                         </Pressable>
-                        <Text style={styles.descriptionVolumeText}>
+                        <Text
+                            style={styles.descriptionVolumeText}
+                            accessibilityLabel={`Description volume is set to ${currentDescriptionVolume}.`}
+                        >
                             {currentDescriptionVolume}
                         </Text>
                         <Pressable
                             style={styles.descriptionVolumeBtn}
                             onPress={incrementDescriptionVolume}
                             disabled={currentDescriptionVolume >= 10}
+                            accessibilityLabel="Increase Description Volume."
+                            accessibilityRole="button"
+                            accessibilityHint="Click to increase the description volume by 1."
                         >
                             <FontAwesome5 name = 'plus' size = {16} color = {'#384488'} />
                         </Pressable>

@@ -28,17 +28,29 @@ export default function DescriptionOptions({ numberOfDescriptions, showChangeDes
                 <Text>Other Description Options</Text>
                 {
                     numberOfDescriptions > 0 &&
-                    <TouchableOpacity style={styles.button} onPress={toggleDescriptionActivity}>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={toggleDescriptionActivity}
+                        accessibilityRole="button"
+                    >
                         <Text style={styles.buttonText}>Turn Off Descriptions</Text>
                     </TouchableOpacity>
                 }
                 {
                     numberOfDescriptions > 1 && 
-                    <TouchableOpacity style={styles.button} onPress={showChangeDescriptionModal}>
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={showChangeDescriptionModal}
+                        accessibilityRole="button"
+                    >
                         <Text style={styles.buttonText}>Change Description</Text>
                     </TouchableOpacity>
                 }
-                <TouchableOpacity style={styles.button} onPress={comingSoonAlert}>
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={comingSoonAlert}
+                    accessibilityRole="button"
+                >
                     <Text style={styles.buttonText}>Add Description</Text>
                 </TouchableOpacity>
             </View>
@@ -47,7 +59,11 @@ export default function DescriptionOptions({ numberOfDescriptions, showChangeDes
         return (
             <View style={styles.container}>
                 <Text>Descriptions Off</Text>
-                <TouchableOpacity style={styles.button} onPress={toggleDescriptionActivity}>
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={toggleDescriptionActivity}
+                    accessibilityRole="button"
+                >
                     <Text style={styles.buttonText}>Turn On Descriptions</Text>
                 </TouchableOpacity>
             </View>

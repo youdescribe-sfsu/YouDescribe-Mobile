@@ -45,6 +45,7 @@ export default function VideoCard(props) {
             <TouchableOpacity
                 onPress={openVideo}
                 accessibilityLabel={`${props.video.title} by ${props.video.channel}. Duration: ${minutes} minutes and ${seconds} seconds`}
+                accessibilityRole="button"
                 style={styles.video}
             >
                 <View style={styles.thumbnail}>

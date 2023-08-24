@@ -11,7 +11,12 @@ export default function RecentSearches() {
   const [recentSearches, setRecentSearches] = useState(null);
 
   const renderSearchPhrase = ({ item }) => (
-    <TouchableOpacity style={styles.searchPhrase} onPress={() => updateSearchTerm(item.phrase)}>
+    <TouchableOpacity
+      style={styles.searchPhrase}
+      onPress={() => updateSearchTerm(item.phrase)}
+      accessibilityLabel={`${item.phrase}. Search history suggestion.`}
+      accessibilityRole="button"
+    >
         <FontAwesome5 name='history' size={20}/>
         <Text style={styles.searchPhraseText}>{item.phrase}</Text>
     </TouchableOpacity>

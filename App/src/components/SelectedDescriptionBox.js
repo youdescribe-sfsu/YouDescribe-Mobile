@@ -39,7 +39,11 @@ export default function SelectedDescriptionBox({ user, showRateDescriptionModal 
                         </View>
                     </View>
                 </View>
-                <TouchableOpacity style={styles.buttonContainer} onPress={showRateDescriptionModal}>
+                <TouchableOpacity
+                    style={styles.buttonContainer}
+                    onPress={showRateDescriptionModal}
+                    accessibilityRole="button"
+                >
                     <View style={styles.button}>
                         <Text style={styles.buttonText}>Rate Description</Text>
                     </View>

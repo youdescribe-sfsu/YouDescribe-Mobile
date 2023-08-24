@@ -10,9 +10,13 @@ export default function UserInfo({loginUser, logoutUser}) {
         return(
             <View style={styles.container}>
                 <Image source={{uri: user.picture}} style={styles.userImage}/>
-                <Text style={styles.userName}>{user.name}</Text>
-                <Text style={styles.userEmail}>{user.email}</Text>
-                <TouchableOpacity onPress={() => logoutUser(true)}>
+                <Text style={styles.userName} accessibilityLabel={`Signed in as ${user.name}`}>
+                    {user.name}
+                </Text>
+                <Text style={styles.userEmail} accessibilityLabel={`Signed in with email ${user.email}`}>
+                    {user.email}
+                </Text>
+                <TouchableOpacity onPress={() => logoutUser(true)} accessibilityRole="button">
                     <View style={styles.loginBtn}>
                         <Image style={styles.loginBtnImg} source={require('../assets/google_logo.png')} />
                         <Text style={styles.loginBtnText}>Sign In with another account</Text>
@@ -26,7 +30,7 @@ export default function UserInfo({loginUser, logoutUser}) {
         <View style={styles.container}>
             <Image source={require('../assets/user_placeholder.webp')} style={styles.userImage}/>
             <Text style={{marginTop: 5}}>Please Sign In to access more features.</Text>
-            <TouchableOpacity onPress={loginUser}>
+            <TouchableOpacity onPress={loginUser} accessibilityRole="button">
                 <View style={styles.loginBtn}>
                     <Image style={styles.loginBtnImg} source={require('../assets/google_logo.png')} />
                     <Text style={styles.loginBtnText}>Sign In with Google</Text>

@@ -18,11 +18,13 @@ export default function ContactUsModal({navigation}) {
 
     return(
         <View style={styles.container}>
-            <Text style={styles.containerText}>YouDescribe is a project of:</Text>
-            <Text style={styles.containerText}>The Smith-Kettlewell Eye Research Institute</Text>
-            <Text style={styles.containerText}>2318 Fillmore Street</Text>
-            <Text style={styles.containerText}>San Francisco, CA 94115</Text>
-            <View style={styles.emailText}>
+            <View accessible={true}>
+                <Text style={styles.containerText}>YouDescribe is a project of:</Text>
+                <Text style={styles.containerText}>The Smith-Kettlewell Eye Research Institute</Text>
+                <Text style={styles.containerText}>2318 Fillmore Street</Text>
+                <Text style={styles.containerText}>San Francisco, CA 94115</Text>
+            </View>
+            <View style={styles.emailText} accessible={true}>
                 <Text style={styles.containerText}>Email questions, comments, bug reports, and feature requests to:</Text>
                 <Pressable
                     onPress={() => Linking.openURL('mailto:info@youdescribe.org')}

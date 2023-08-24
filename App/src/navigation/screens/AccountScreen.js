@@ -75,7 +75,7 @@ export default function AccountScreen({navigation}) {
 
   const LogoutButton = () => {
     return(
-      <TouchableOpacity onPress={() => logoutUser(false)}>
+      <TouchableOpacity onPress={() => logoutUser(false)} accessibilityRole="button">
         <View style={styles.logoutBtn}>
           <Ionicons name = 'log-out-outline' size = {28} color = '#db411a' />
           <Text style={styles.logoutBtnText}>Sign Out</Text>
@@ -109,19 +109,19 @@ export default function AccountScreen({navigation}) {
     <View style={styles.container} >
       <UserInfo loginUser={loginUser} logoutUser={logoutUser}/>
       <View style={styles.accountOptions}>
-        <TouchableOpacity onPress={openHelpAndSupport}>
+        <TouchableOpacity onPress={openHelpAndSupport} accessibilityRole="button">
           <View style={styles.accountOption}>
             <Ionicons name = 'help-circle' size = {22} color = '#000' />
             <Text style={styles.accountOptionText}>Help And Support</Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={openCredits}>
+        <TouchableOpacity onPress={openCredits} accessibilityRole="button">
           <View style={styles.accountOption}>
             <Ionicons name = 'people' size = {22} color = '#000' />
             <Text style={styles.accountOptionText}>Credits</Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={openContactUs}>
+        <TouchableOpacity onPress={openContactUs} accessibilityRole="button">
           <View style={styles.accountOption}>
             <Ionicons name = 'mail' size = {22} color = '#000' />
             <Text style={styles.accountOptionText}>Contact Us</Text>

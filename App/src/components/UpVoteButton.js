@@ -40,7 +40,12 @@ export default function UpVoteButton({youtubeId}) {
     }
 
     return (
-        <TouchableOpacity onPress={upvote}>
+        <TouchableOpacity
+            onPress={upvote}
+            accessibilityLabel="upvote"
+            accessibilityRole="button"
+            accessibilityHint="Click this button to vote for this video. Videos with more number of votes get described first."
+        >
             <Ionicons name={iconName} size={25} color="#384488" ></Ionicons>
         </TouchableOpacity>
     );

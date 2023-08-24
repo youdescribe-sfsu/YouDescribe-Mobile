@@ -10,7 +10,7 @@ export default function EditButton() {
     }    
 
     return (
-        <TouchableOpacity onPress={comingSoonAlert}>
+        <TouchableOpacity onPress={comingSoonAlert} accessibilityRole="button">
             <View style={styles.button}>
                 <Text style={styles.buttonText}>Edit</Text>
             </View>

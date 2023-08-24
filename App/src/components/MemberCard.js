@@ -2,7 +2,11 @@ import {View, Text, Image, StyleSheet} from 'react-native';
 
 export default function MemberCard({ member }) {
     return(
-        <View style={styles.memberCard}>
+        <View
+            style={styles.memberCard}
+            accessible={true}
+            accessibilityLabel={`Name: ${member.name}. Designation: ${member.designation}. Tenure: ${member.tenure}. Image: ${member.description}`}
+        >
             <Image
                 style={styles.memberImage}
                 resizeMode='cover'

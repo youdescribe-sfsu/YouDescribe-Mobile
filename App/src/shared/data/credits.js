@@ -43,7 +43,7 @@ export const creditsDetails = [
         pdf: "895Report_Poorva.pdf",
         tenure: "2018 - Present",
         year: "present",
-        description: "Photo os Ilmi Yoon, an asian woman with fair skin and with long wavy brown hair. She is smiling brightly at the camera."
+        description: "Photo of Ilmi Yoon, an asian woman with fair skin and with long wavy brown hair. She is smiling brightly at the camera."
       },
       {
         name: "Andrew Taylor Scott",
@@ -61,7 +61,7 @@ export const creditsDetails = [
         img: require('../../assets/benjamin.jpg'),
         designation: "Team Lead",
         year: 2023,
-        tenure: "2022-2023",
+        tenure: "2022 - 2023",
         description: "Photo of Benjamin Kao, he is wearing spectacles and smiling at the camera. He is also wearing a black suit with a back bow-tie"
       },
       {
@@ -70,7 +70,7 @@ export const creditsDetails = [
         img: require('../../assets/vishal.png'),
         designation: "GPU Accelerated Backend Developer",
         year: 2023,
-        tenure: "2022-2023",
+        tenure: "2022 - 2023",
         description: "Photo of Vishal Sharma, This picture was taken at the Golden Gate Bridge. Vishal is standing on the footpath that runs along the side of the bridge and is wearing a blue t-shirt and a black hoodie."
       },
       {
@@ -79,7 +79,7 @@ export const creditsDetails = [
         img: require('../../assets/sanket.jpg'),
         designation: "Frontend Developer",
         year: 2023,
-        tenure: "2022-2023",
+        tenure: "2022 - 2023",
         description: "Photo of Sanket Naik, This picture was taken in front of the Golden Gate Bridge. Sanket is standing in front of the Golden Gate Bridge at the end of the Baker Beach Trail. He is wearing a black hoodie"
       },
       {
@@ -88,7 +88,7 @@ export const creditsDetails = [
         img: require('../../assets/manali.jpg'),
         designation: "Data Engineer",
         year: 2023,
-        tenure: "2022-2023",
+        tenure: "2022 - 2023",
         description: "Photo of Manali Seth, Manali is smiling while waiting for food in the restaurant."
       },
       {
@@ -97,7 +97,7 @@ export const creditsDetails = [
         img: require('../../assets/kishan.jpg'),
         designation: "Mobile Application Developer",
         year: 2023,
-        tenure: "2022-2023",
+        tenure: "2022 - 2023",
         description: "Photo of Kishan Patel. This picture was taken at Fisherman's Wharf in San Francisco. In this picture, Kishan is wearing a black sweatshirt over a white shirt and is smiling at the camera."
       },
       {
@@ -106,7 +106,7 @@ export const creditsDetails = [
         img: require('../../assets/caelen.jpg'),
         designation: "Machine Learning Engineer",
         year: 2023,
-        tenure: "2022-2023",
+        tenure: "2022 - 2023",
         description: "Photo of Calen Wang, Calen is wearing a grey jacket and smiling at the camera on a foggy day. "
       },
       {
@@ -115,7 +115,7 @@ export const creditsDetails = [
         img: require('../../assets/hirva.jpeg'),
         designation: "YouDescribeX Software Engineer",
         year: 2023,
-        tenure: "2022-2023",
+        tenure: "2022 - 2023",
         description: "Photo of Hirva Patel, This picture was taken in Seattle when I was interning at Amazon in Summer 2022."
       },
       {

@@ -84,7 +84,7 @@ export default function MainContainer({userInfo}) {
                 component={HomeScreenNavigator}
                 options={{ title: 'YouDescribe',
                            tabBarLabel: 'Home',
-                           tabBarAccessibilityLabel: 'Recent Videos. Tab 1 of 5',
+                           tabBarAccessibilityLabel: 'Recently Described Videos. Tab 1 of 5',
                            tabBarShowLabel: false
                         }}
             />
