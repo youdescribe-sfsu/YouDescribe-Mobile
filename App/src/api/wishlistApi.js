@@ -7,6 +7,7 @@ const getWishlistVideos = async () => {
         const response = await apiClient.get('/wishlist');
         if(response.data){
             const videos = response.data.result;
+            // videos.forEach((video) => {console.log("Youtube ID: ", video.youtube_id, "Votes: ", video.votes, "Voted: ", video.voted)});
             const videosData = await videosApi.getVideosData(videos);
             return videosData;
         }

@@ -32,24 +32,24 @@ const styles = StyleSheet.create({
     },
     videoTitle: {
         fontWeight: 'bold',
-        fontSize: 18,
-        marginVertical: 6
+        fontSize: 14,
+        marginVertical: 3
     },
     channelDate: {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingVertical: 10,
+        paddingVertical: 5,
         borderBottomWidth: 1,
         borderBottomColor: '#c3b6b6'
     },
     channelName: {
-        fontWeight: '600'
+        fontWeight: '400'
     },
     viewsLikes: {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingVertical: 10
+        paddingVertical: 5
     }
 });

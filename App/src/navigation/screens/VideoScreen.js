@@ -1,4 +1,4 @@
-import { View, StyleSheet, useWindowDimensions, Modal, Alert, Pressable, Text, TouchableOpacity } from "react-native";
+import { SafeAreaView, View, StyleSheet, useWindowDimensions, Modal, Alert, Pressable, Text, TouchableOpacity } from "react-native";
 import { useState, useEffect, useRef } from "react";
 import YoutubePlayer from 'react-native-youtube-iframe';
 // import MultiSlider from '@ptomasroos/react-native-multi-slider';
@@ -21,9 +21,13 @@ import DescriptionOptions from "../../components/DescriptionOptions";
 export default function VideoScreen({ route }) {
     console.log("Rerendered!!");
     const deviceWidth = useWindowDimensions().width;
+    const deviceHeight = useWindowDimensions().height;
+    const remainingHeight = deviceHeight - (9 / 16 * deviceWidth) - 100;
     const isDescriptionActive = getDescriptionActivity();
     const video = route.params.video;
     const user = getUser();
+    const [elapsed, setElapsed] = useState('00:00');
+    const [elapsedAccessibilityLabel, setElapsedAccessibilityLabel] = useState('Zero minutes, zero seconds');
     const videoPlayerRef = useRef();
     const currentClipRef = useRef(null);
     const [audioDescriptions, setAudioDescriptions] = useState([]);
@@ -42,8 +46,12 @@ export default function VideoScreen({ route }) {
 
     const getAudioDescriptions = async () => {
         console.log("getAudioDescriptions");
-        const audioDescriptions = await videosApi.getAudioDescriptions(video.videoId);
-        setAudioDescriptions(audioDescriptions);
+        try {
+            const audioDescriptions = await videosApi.getAudioDescriptions(video.videoId);
+            setAudioDescriptions(audioDescriptions);
+        } catch (error) {
+            console.log("Error: ", error);
+        }
     }
 
     const parseAudioDescriptions = () => {
@@ -137,87 +145,103 @@ export default function VideoScreen({ route }) {
     }
 
     const onVPStateChange = async (event) => {
-        // console.log("onVPStateChange");
-        switch(event){
-            case "playing":
-                setIsVideoPlaying(true);
-                if(currentClipRef.current && currentClipRef.current.playbackType === "extended"){
-                    await currentClipRef.current.audio.stopAsync();
-                    currentClipRef.current = null;
-                } else {
-                    checkSeek();
-                    if(isDescriptionActive){
-                        startProgressWatcher();
+        console.log("onVPStateChange");
+        try {
+            switch(event){
+                case "playing":
+                    console.log("playing");
+                    setIsVideoPlaying(true);
+                    if(currentClipRef.current && currentClipRef.current.playbackType === "extended"){
+                        await currentClipRef.current.audio.stopAsync();
+                        currentClipRef.current = null;
+                    } else {
+                        checkSeek();
+                        if(isDescriptionActive){
+                            startProgressWatcher();
+                        }
                     }
-                }
-                break;
-            case "paused":
-                stopProgressWatcher();
-                setIsVideoPlaying(false);
-                if(currentClipRef.current && currentClipRef.current.playbackType !== "extended"){
-                    pauseAudioClips();
-                }
-                break;
-            case "buffering":
-                if(currentClipRef.current && currentClipRef.current.playbackType !== "extended"){
-                    await currentClipRef.current.audio.stopAsync();
-                    currentClipRef.current = null;
-                }
-                break;
-            default:
-                break;
+                    break;
+                case "paused":
+                    console.log("paused");
+                    stopProgressWatcher();
+                    setIsVideoPlaying(false);
+                    if(currentClipRef.current && currentClipRef.current.playbackType !== "extended"){
+                        pauseAudioClips();
+                    }
+                    break;
+                case "buffering":
+                    console.log("buffering");
+                    if(currentClipRef.current && currentClipRef.current.playbackType !== "extended"){
+                        await currentClipRef.current.audio.stopAsync();
+                        currentClipRef.current = null;
+                    }
+                    break;
+                default:
+                    console.log("default");
+                    break;
+            }
+        } catch (error) {
+            console.log("Error: ", error);
         }
     }
 
     const checkSeek = async () => {
         console.log("checkSeek");
-        if(selectedAudioDescriptionId && currentClipRef.current){
-            await currentClipRef.current.audio.stopAsync();
-            currentClipRef.current = null;
-        }
-        let videoTimestamp;
-        videoPlayerRef.current?.getCurrentTime().then(currentTime => {
-            videoTimestamp = currentTime;
-        });
-        //round to 2 nearest dec
-        videoTimestamp = Math.round(videoTimestamp * 100) / 100;
-        for(let i = 0; i < audioClips.length; i++){
-            const clip = audioClips[i];
-            if(clip.playback_type === "inline"){
-                let startTime = Math.round(clip.start_time * 100) / 100;
-                let duration = Math.round(clip.duration * 100) / 100;
-                if(startTime > videoTimestamp){
-                    break;
-                }
-                if(startTime < videoTimestamp && videoTimestamp < startTime + duration){
-                    const diff = videoTimestamp - startTime;
-                    playAudioClip(clip, diff);
-                    break;
+        try {
+            if(selectedAudioDescriptionId && currentClipRef.current){
+                await currentClipRef.current.audio.stopAsync();
+                currentClipRef.current = null;
+            }
+            let videoTimestamp;
+            videoPlayerRef.current?.getCurrentTime().then(currentTime => {
+                videoTimestamp = currentTime;
+            });
+            //round to 2 nearest dec
+            videoTimestamp = Math.round(videoTimestamp * 100) / 100;
+            for(let i = 0; i < audioClips.length; i++){
+                const clip = audioClips[i];
+                if(clip.playback_type === "inline"){
+                    let startTime = Math.round(clip.start_time * 100) / 100;
+                    let duration = Math.round(clip.duration * 100) / 100;
+                    if(startTime > videoTimestamp){
+                        break;
+                    }
+                    if(startTime < videoTimestamp && videoTimestamp < startTime + duration){
+                        const diff = videoTimestamp - startTime;
+                        playAudioClip(clip, diff);
+                        break;
+                    }
                 }
             }
+        } catch (error) {
+            console.log("Error: ", error);
         }
     }
 
     const startProgressWatcher = () => {
-        // console.log("startProgressWatcher");
+        console.log("startProgressWatcher");
         if(selectedAudioDescriptionId){
             const interval = 50;
             if(progressWatcher){
                 stopProgressWatcher();
             }
             const progressWatcher = setInterval(async () => {
-                if(videoPlayerRef && videoPlayerRef.current){
-                    const currentTime = await videoPlayerRef.current.getCurrentTime();
-                    const currentVideoProgressFloor = parseFloat(currentTime);
-                    // TODO: Audio Ducking goes here.
-                    audioClips.forEach((audioClip, idx) => {
-                        if(currentVideoProgressFloor >= parseFloat(parseFloat(audioClip.start_time) - 0.07) &&
-                           currentVideoProgressFloor <= parseFloat(parseFloat(audioClip.start_time) + 0.07)){
-                            if(!currentClipRef.current){
-                                playAudioClip(audioClip, idx);
+                try {
+                    if(videoPlayerRef && videoPlayerRef.current){
+                        const currentTime = await videoPlayerRef.current.getCurrentTime();
+                        const currentVideoProgressFloor = parseFloat(currentTime);
+                        // TODO: Audio Ducking goes here.
+                        audioClips.forEach((audioClip, idx) => {
+                            if(currentVideoProgressFloor >= parseFloat(parseFloat(audioClip.start_time) - 0.07) &&
+                               currentVideoProgressFloor <= parseFloat(parseFloat(audioClip.start_time) + 0.07)){
+                                if(!currentClipRef.current){
+                                    playAudioClip(audioClip, idx);
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
+                } catch (error) {
+                    console.log("Error: ", error);
                 }
             }, interval);
             setProgressWatcher(progressWatcher);
@@ -225,7 +249,7 @@ export default function VideoScreen({ route }) {
     }
 
     const stopProgressWatcher = () => {
-        // console.log("stopProgressWatcher");
+        console.log("stopProgressWatcher");
         if(progressWatcher){
             clearInterval(progressWatcher);
             setProgressWatcher(null);
@@ -279,41 +303,46 @@ export default function VideoScreen({ route }) {
 
     let prevTimestamp = -1;
     const handleClipUpdates = async (status) => {
-        // console.log("handleClipUpdates");
-        if(status.isLoaded){
-            if(status.isPlaying){
-                console.log("Audio Clip is Playing");
-                console.log("Audio Clip current timestamp: ",status.positionMillis/1000);
-                // Manually checking if the audio clip has finished playing
-                // because for some clips, when they finish playing, the status doesn't change automatically
-                if(status.positionMillis === prevTimestamp &&
-                   status.positionMillis === parseInt(currentClipRef.current.duration*1000)){
-                    console.log("Finished Playing Manually");
+        console.log("handleClipUpdates");
+        try {
+            if(status.isLoaded){
+                if(status.isPlaying){
+                    console.log("Audio Clip is Playing");
+                    console.log("Audio Clip current timestamp: ",status.positionMillis/1000);
+                    // Manually checking if the audio clip has finished playing
+                    // because for some clips, when they finish playing, the status doesn't change automatically
+                    if(currentClipRef && currentClipRef.current && 
+                       status.positionMillis === prevTimestamp &&
+                       status.positionMillis === parseInt(currentClipRef.current.duration*1000)){
+                        console.log("Finished Playing Manually");
+                        if(currentClipRef.current){
+                            if(currentClipRef.current.playbackType === 'extended'){
+                                setIsVideoPlaying(true);
+                            }
+                            await currentClipRef.current.audio.stopAsync();
+                            currentClipRef.current = null;
+                        }
+                    } else {
+                        prevTimestamp = status.positionMillis;
+                    }
+                } else if(status.isBuffering){
+                    console.log("Audio Clip Buffering");
+                } else if(status.didJustFinish){
+                    console.log("Finished Playing Automatically");
                     if(currentClipRef.current){
                         if(currentClipRef.current.playbackType === 'extended'){
                             setIsVideoPlaying(true);
                         }
-                        await currentClipRef.current.audio.stopAsync();
                         currentClipRef.current = null;
                     }
-                } else {
-                    prevTimestamp = status.positionMillis;
                 }
-            } else if(status.isBuffering){
-                console.log("Audio Clip Buffering");
-            } else if(status.didJustFinish){
-                console.log("Finished Playing Automatically");
-                if(currentClipRef.current){
-                    if(currentClipRef.current.playbackType === 'extended'){
-                        setIsVideoPlaying(true);
-                    }
-                    currentClipRef.current = null;
+            } else {
+                if(status.error) {
+                    console.log("Error while playing audio clip: ", status.error);
                 }
             }
-        } else {
-            if(status.error) {
-                console.log("Error while playing audio clip: ", status.error);
-            }
+        } catch (error) {
+            console.log("Error: ", error);
         }
     }
 
@@ -397,13 +426,86 @@ export default function VideoScreen({ route }) {
     }
 
     const updateDescriptionVolume = async () => {
-        if(currentClipRef.current){
-            await currentClipRef.current.audio.setVolumeAsync(currentDescriptionVolume/10);
+        try {
+            if(currentClipRef.current){
+                await currentClipRef.current.audio.setVolumeAsync(currentDescriptionVolume/10);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const stopYTVideo = async () => {
+        console.log("stopYTVideo Clicked");
+        try {
+            if(videoPlayerRef && videoPlayerRef.current){
+                setIsVideoPlaying(false);
+                const duration = await videoPlayerRef.current.getDuration();
+                await videoPlayerRef.current.seekTo(duration);
+                stopProgressWatcher();
+                if(currentClipRef && currentClipRef.current){
+                    await currentClipRef.current.audio.stopAsync();
+                    currentClipRef.current = null;
+                }
+                setElapsed('00:00');
+                setElapsedAccessibilityLabel('Zero minutes, zero seconds');
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const forwardYTVideo = async (seconds) => {
+        console.log("forwardYTVideo Clicked");
+        try {
+            if(videoPlayerRef && videoPlayerRef.current){
+                const currentTime = await videoPlayerRef.current.getCurrentTime();
+                await videoPlayerRef.current.seekTo(currentTime + seconds);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const backwardYTVideo = async (seconds) => {
+        console.log("backwardYTVideo Clicked");
+        try {
+            if(videoPlayerRef && videoPlayerRef.current){
+                const currentTime = await videoPlayerRef.current.getCurrentTime();
+                await videoPlayerRef.current.seekTo(currentTime - seconds);
+            }
+        } catch (error) {
+            console.log(error);
         }
     }
 
     useEffect(() => {
         getAudioDescriptions();
+
+        const interval = setInterval(async () => {
+            try {
+                const elapsed_sec = await videoPlayerRef.current.getCurrentTime();
+        
+                // calculations
+                const elapsed_ms = Math.floor(elapsed_sec * 1000);
+                const ms = elapsed_ms % 1000;
+                const min = Math.floor(elapsed_ms / 60000);
+                const seconds = Math.floor((elapsed_ms - min * 60000) / 1000);
+            
+                setElapsed(
+                    min.toString().padStart(2, '0') +
+                    ':' +
+                    seconds.toString().padStart(2, '0')
+                );
+                setElapsedAccessibilityLabel(`${min} minutes, ${seconds} seconds`);
+            } catch (error) {
+                console.log("Error: ", error);
+            }
+        }, 800);
+
+        return () => {
+            clearInterval(interval);
+        };
     }, []);
 
     useEffect(() => {
@@ -419,11 +521,15 @@ export default function VideoScreen({ route }) {
     }, [selectedAudioDescriptionId]);
 
     useEffect(() => {
+        setIsVideoPlaying(true); // Start playing the video once the audio clips are loaded.
+    }, [audioClips]);
+
+    useEffect(() => {
         updateDescriptionVolume();
     }, [currentDescriptionVolume]);
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <YoutubePlayer
                 ref={videoPlayerRef}
                 height={deviceWidth * 9 / 16} // Setting the height to 9/16th of the device's width as the video player's aspect ratio is 16:9
@@ -431,55 +537,127 @@ export default function VideoScreen({ route }) {
                 videoId={video.videoId}
                 onChangeState={onVPStateChange}
             />
-            {
-                audioDescriptions &&
-                audioDescriptions.length > 0 &&
-                <View style={styles.sliderContainerView}>
-                    <Text
-                        style={{color: '#fff', fontSize: 16}}
-                        accessibilityLabel={`Description Volume. Currently set to ${currentDescriptionVolume}`}
+            <View style={{ height: remainingHeight }}>
+                <View style={styles.mediaControls}>
+                    <Pressable
+                        style={styles.mediaControlBtn}
+                        onPress={() => setIsVideoPlaying(!isVideoPlaying)}
+                        accessibilityLabel={ isVideoPlaying ? "Pause video." : "Play video."}
+                        accessibilityRole="button"
                     >
-                        Description Volume
+                        {
+                            isVideoPlaying ?
+                            <FontAwesome5 name = 'pause' size = {30} color = {'#384488'} /> :
+                            <FontAwesome5 name = 'play' size = {30} color = {'#384488'} />
+                        }
+                    </Pressable>
+                    <Text
+                        style={{fontSize: 20, fontWeight: 'bold', paddingHorizontal: 30}}
+                        accessibilityLabel={elapsedAccessibilityLabel}
+                    >
+                        Elapsed Time : {elapsed}
                     </Text>
-                    <View style={styles.descriptionVolume}>
-                        <Pressable
-                            style={styles.descriptionVolumeBtn}
-                            onPress={decrementDescriptionVolume}
-                            disabled={currentDescriptionVolume <= 0}
-                            accessibilityLabel="Decrease Description Volume."
-                            accessibilityRole="button"
-                            accessibilityHint="Click to decrease the description volume by 1."
-                        >
-                            <FontAwesome5 name = 'minus' size = {16} color = {'#384488'} />
-                        </Pressable>
-                        <Text
-                            style={styles.descriptionVolumeText}
-                            accessibilityLabel={`Description volume is set to ${currentDescriptionVolume}.`}
-                        >
-                            {currentDescriptionVolume}
-                        </Text>
-                        <Pressable
-                            style={styles.descriptionVolumeBtn}
-                            onPress={incrementDescriptionVolume}
-                            disabled={currentDescriptionVolume >= 10}
-                            accessibilityLabel="Increase Description Volume."
-                            accessibilityRole="button"
-                            accessibilityHint="Click to increase the description volume by 1."
-                        >
-                            <FontAwesome5 name = 'plus' size = {16} color = {'#384488'} />
-                        </Pressable>
-                    </View>
                 </View>
-            }
-            <VideoInfo video={video}/>
-            <SelectedDescriptionBox
-                user={audioDescriptionsIdsUsers[selectedAudioDescriptionId]}
-                showRateDescriptionModal={showRateDescriptionModal}
-            />
-            <DescriptionOptions
-                numberOfDescriptions={audioDescriptions ? audioDescriptions.length : 0}
-                showChangeDescriptionModal={showChangeDescriptionModal}
-            />
+                <View style={{ height: '65%' }}>
+                    <VideoInfo video={video}/>
+                    <SelectedDescriptionBox
+                        user={audioDescriptionsIdsUsers[selectedAudioDescriptionId]}
+                        showRateDescriptionModal={showRateDescriptionModal}
+                    />
+                    <DescriptionOptions
+                        numberOfDescriptions={audioDescriptions ? audioDescriptions.length : 0}
+                        showChangeDescriptionModal={showChangeDescriptionModal}
+                    />
+                </View>
+                {
+                    audioDescriptions &&
+                    audioDescriptions.length > 0 &&
+                    <View style={styles.sliderContainerView}>
+                        <Text
+                            style={{color: '#fff', fontSize: 16}}
+                            accessibilityLabel={`Description Volume. Currently set to ${currentDescriptionVolume}`}
+                        >
+                            Description Volume
+                        </Text>
+                        <View style={styles.descriptionVolume}>
+                            <Pressable
+                                style={styles.descriptionVolumeBtn}
+                                onPress={decrementDescriptionVolume}
+                                disabled={currentDescriptionVolume <= 0}
+                                accessibilityLabel="Decrease Description Volume."
+                                accessibilityRole="button"
+                                accessibilityHint="Click to decrease the description volume by 1."
+                            >
+                                <FontAwesome5 name = 'minus' size = {16} color = {'#384488'} />
+                            </Pressable>
+                            <Text
+                                style={styles.descriptionVolumeText}
+                                accessibilityLabel={`Description volume is set to ${currentDescriptionVolume}.`}
+                            >
+                                {currentDescriptionVolume}
+                            </Text>
+                            <Pressable
+                                style={styles.descriptionVolumeBtn}
+                                onPress={incrementDescriptionVolume}
+                                disabled={currentDescriptionVolume >= 10}
+                                accessibilityLabel="Increase Description Volume."
+                                accessibilityRole="button"
+                                accessibilityHint="Click to increase the description volume by 1."
+                            >
+                                <FontAwesome5 name = 'plus' size = {16} color = {'#384488'} />
+                            </Pressable>
+                        </View>
+                    </View>
+                }
+                <View style={styles.mediaControls}>
+                    <TouchableOpacity
+                        style={styles.mediaControlBtn}
+                        onPress={() => backwardYTVideo(30)}
+                        accessibilityLabel="Rewind 30 seconds"
+                        accessibilityRole="button"
+                        accessibilityHint="Double tab to jump back 30 seconds in the video."
+                    >
+                        <FontAwesome5 name = 'fast-backward' size = {24} color = {'#384488'} />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.mediaControlBtn}
+                        onPress={() => backwardYTVideo(5)}
+                        accessibilityLabel="Rewind 5 seconds"
+                        accessibilityRole="button"
+                        accessibilityHint="Double tab to jump back 5 seconds in the video."
+                    >
+                        <FontAwesome5 name = 'backward' size = {24} color = {'#384488'} />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.mediaControlBtn}
+                        onPress={stopYTVideo}
+                        accessibilityLabel="Stop video"
+                        accessibilityRole="button"
+                        accessibilityHint="Double tap to stop playing the video and audio clips."
+                    >
+                        <FontAwesome5 name = 'stop' size = {24} color = {'#384488'} />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.mediaControlBtn}
+                        onPress={() => forwardYTVideo(5)}
+                        accessibilityLabel="Forward 5 seconds"
+                        accessibilityRole="button"
+                        accessibilityHint="Double tab to jump forward 5 seconds in the video."
+                    >
+                        <FontAwesome5 name = 'forward' size = {24} color = {'#384488'} />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.mediaControlBtn}
+                        onPress={() => forwardYTVideo(30)}
+                        accessibilityLabel="Forward 30 seconds"
+                        accessibilityRole="button"
+                        accessibilityHint="Double tab to jump forward 30 seconds in the video."
+                    >
+                        <FontAwesome5 name = 'fast-forward' size = {24} color = {'#384488'} />
+                    </TouchableOpacity>
+                </View>
+                {/* <View style={{ height: '1%', backgroundColor: 'red' }}></View> */}
+            </View>
             <Modal
                 animationType="slide"
                 visible={changeDescriptionModalVisible}
@@ -507,7 +685,7 @@ export default function VideoScreen({ route }) {
                     currentRating={currentRating}
                 />
             </Modal>
-        </View>
+        </SafeAreaView>
     );
 }
 
@@ -531,7 +709,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        height: 50,
+        height: '10%',
         backgroundColor: '#000',
         paddingHorizontal: 15,
     },
@@ -552,5 +730,21 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 20,
         fontWeight: 'bold'
+    },
+    mediaControls: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        height: '12%',
+        paddingHorizontal: 10,
+        backgroundColor: 'gray'
+    },
+    mediaControlBtn: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '80%',
+        width: '16%'
     }
 });

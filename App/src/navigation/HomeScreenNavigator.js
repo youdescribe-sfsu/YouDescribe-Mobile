@@ -24,7 +24,10 @@ export default function HomeScreenNavigator({ navigation, route }) {
     }, [navigation, route]);
 
     return (
-        <Stack.Navigator initialRouteName={'Home'}>
+        <Stack.Navigator
+            initialRouteName={'Home'}
+            screenOptions={{ animation: 'none' }}
+        >
             <Stack.Screen 
                 name={'Home'}
                 component={HomeScreen}
@@ -36,7 +39,7 @@ export default function HomeScreenNavigator({ navigation, route }) {
                 name={'Video'}
                 component={VideoScreen}
                 options={{
-                    title: 'Video Player',
+                    title: 'Video Player with Audio Descriptions',
                     headerBackTitle: 'YouDescribe'
                 }}
             />

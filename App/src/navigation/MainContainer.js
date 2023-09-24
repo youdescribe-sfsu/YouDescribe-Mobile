@@ -76,7 +76,8 @@ export default function MainContainer({userInfo}) {
                 tabBarStyle: styles.tabBar,
                 tabBarLabelStyle: styles.label,
                 headerStyle: styles.header,
-                headerTitleStyle: styles.headerTitle
+                headerTitleStyle: styles.headerTitle,
+                animationEnabled: false
             })}>
 
             <Tab.Screen

@@ -25,7 +25,7 @@ export default function DescriptionOptions({ numberOfDescriptions, showChangeDes
     if(isDescriptionActive){
         return (
             <View style={styles.container}>
-                <Text>Other Description Options</Text>
+                {/* <Text>Other Description Options</Text> */}
                 {
                     numberOfDescriptions > 0 &&
                     <TouchableOpacity
@@ -46,19 +46,19 @@ export default function DescriptionOptions({ numberOfDescriptions, showChangeDes
                         <Text style={styles.buttonText}>Change Description</Text>
                     </TouchableOpacity>
                 }
-                <TouchableOpacity
+                {/* <TouchableOpacity
                     style={styles.button}
                     onPress={comingSoonAlert}
                     accessibilityRole="button"
                 >
                     <Text style={styles.buttonText}>Add Description</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </View>
         );
     } else {
         return (
             <View style={styles.container}>
-                <Text>Descriptions Off</Text>
+                {/* <Text>Descriptions Off</Text> */}
                 <TouchableOpacity
                     style={styles.button}
                     onPress={toggleDescriptionActivity}
@@ -74,12 +74,11 @@ export default function DescriptionOptions({ numberOfDescriptions, showChangeDes
 const styles = StyleSheet.create({
     container: {
         display: 'flex',
-        marginHorizontal: 20,
-        marginVertical: 10
+        marginHorizontal: 20
     },
     button: {
-        width: 200,
-        height: 36,
+        width: 220,
+        height: 50,
         backgroundColor: '#384488',
         display: 'flex',
         justifyContent: 'center',
