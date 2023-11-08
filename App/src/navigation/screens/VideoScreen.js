@@ -1,4 +1,4 @@
-import { SafeAreaView, View, StyleSheet, useWindowDimensions, Modal, Alert, Pressable, Text, TouchableOpacity } from "react-native";
+import { SafeAreaView, View, StyleSheet, useWindowDimensions, Modal, Alert, Pressable, Text, TouchableOpacity, Switch } from "react-native";
 import { useState, useEffect, useRef } from "react";
 import YoutubePlayer from 'react-native-youtube-iframe';
 // import MultiSlider from '@ptomasroos/react-native-multi-slider';
@@ -37,6 +37,8 @@ export default function VideoScreen({ route }) {
     const [selectedAudioDescriptionId, setSelectedAudioDescriptionId] = useState("");
     const [audioClips, setAudioClips] = useState([]);
     const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+    const [isVideoMuted, setIsVideoMuted] = useState(false);
+    const [isMuteEnabled, setIsMuteEnabled] = useState(false);
     const [progressWatcher, setProgressWatcher] = useState(null);
     const [changeDescriptionModalVisible, setChangeDescriptionModalVisible] = useState(false);
     const [rateDescriptionModalVisible, setRateDescriptionModalVisible] = useState(false);
@@ -276,6 +278,9 @@ export default function VideoScreen({ route }) {
                 if(audioClip.playback_type === "extended"){
                     setIsVideoPlaying(false);
                 }
+                if(audioClip.playback_type === "inline" && isMuteEnabled){
+                    setIsVideoMuted(true);
+                }
                 // await audioClip.sound.setVolumeAsync(currentDescriptionVolume/10);
                 await audioClip.sound.playAsync();
                 updateDescriptionVolume();
@@ -318,6 +323,8 @@ export default function VideoScreen({ route }) {
                         if(currentClipRef.current){
                             if(currentClipRef.current.playbackType === 'extended'){
                                 setIsVideoPlaying(true);
+                            } else {
+                                setIsVideoMuted(false);
                             }
                             await currentClipRef.current.audio.stopAsync();
                             currentClipRef.current = null;
@@ -479,6 +486,8 @@ export default function VideoScreen({ route }) {
         }
     }
 
+    const toggleMute = () => setIsMuteEnabled(previousState => !previousState);
+
     useEffect(() => {
         getAudioDescriptions();
 
@@ -535,6 +544,7 @@ export default function VideoScreen({ route }) {
                 height={deviceWidth * 9 / 16} // Setting the height to 9/16th of the device's width as the video player's aspect ratio is 16:9
                 play={isVideoPlaying}
                 videoId={video.videoId}
+                mute={isVideoMuted}
                 onChangeState={onVPStateChange}
             />
             <View style={{ height: remainingHeight }}>
@@ -558,7 +568,7 @@ export default function VideoScreen({ route }) {
                         Elapsed Time : {elapsed}
                     </Text>
                 </View>
-                <View style={{ height: '65%' }}>
+                <View style={{ height: '59%' }}>
                     <VideoInfo video={video}/>
                     <SelectedDescriptionBox
                         user={audioDescriptionsIdsUsers[selectedAudioDescriptionId]}
@@ -569,6 +579,22 @@ export default function VideoScreen({ route }) {
                         showChangeDescriptionModal={showChangeDescriptionModal}
                     />
                 </View>
+                {
+                    audioDescriptions &&
+                    audioDescriptions.length > 0 &&
+                    <View style={styles.muteSwitchContainer}>
+                        <Text style={{fontSize: 12, fontWeight: 'bold'}}>
+                            Mute video volume while incline clips are playing?
+                        </Text>
+                        <Switch
+                            trackColor={{false: '#767577', true: '#384488'}}
+                            thumbColor={isMuteEnabled ? '#f4f3f4' : '#f4f3f4'}
+                            ios_backgroundColor="#3e3e3e"
+                            onValueChange={toggleMute}
+                            value={isMuteEnabled}
+                        />
+                    </View>
+                }
                 {
                     audioDescriptions &&
                     audioDescriptions.length > 0 &&
@@ -736,7 +762,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        height: '12%',
+        height: '10%',
         paddingHorizontal: 10,
         backgroundColor: 'gray'
     },
@@ -746,5 +772,14 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         height: '80%',
         width: '16%'
+    },
+    muteSwitchContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        height: '10%',
+        paddingHorizontal: 10,
+        backgroundColor: 'gray'
     }
 });

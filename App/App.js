@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
+import { Alert } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SplashScreen from 'expo-splash-screen';
+import * as Updates from 'expo-updates';
 
 import { UserProvider } from './src/contexts/UserContext';
 import { DescriptionActivityProvider } from './src/contexts/DescriptionActivityContext';
@@ -18,6 +20,13 @@ export default function App() {
   useEffect(() => {
     async function prepare() {
       try {
+        const update = await Updates.checkForUpdateAsync();
+        if(update.isAvailable){
+          Alert.alert(
+            "Update available",
+            "Please install the latest version of the app."
+          );
+        }
         const authCredentials = await AsyncStorage.getItem("authCredentials");
         if(authCredentials){
           setUserInfo(authCredentials);
