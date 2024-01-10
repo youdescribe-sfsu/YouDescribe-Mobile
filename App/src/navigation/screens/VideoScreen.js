@@ -892,7 +892,7 @@ export default function VideoScreen({ route }) {
     //     }
     // }
 
-    let prevTimestamp = -1;
+    // let prevTimestamp = -1;
     const handleClipUpdates = async (status) => {
         console.log("handleClipUpdates");
         try {
@@ -902,22 +902,30 @@ export default function VideoScreen({ route }) {
                     console.log("Audio Clip current timestamp: ",status.positionMillis/1000);
                     // Manually checking if the audio clip has finished playing
                     // because for some clips, when they finish playing, the status doesn't change automatically
-                    // if(currentClipRef && currentClipRef.current && 
-                    //    status.positionMillis === prevTimestamp &&
-                    //    status.positionMillis === parseInt(currentClipRef.current.duration*1000)){
-                    //     console.log("Finished Playing Manually");
-                    //     if(currentClipRef.current){
-                    //         if(currentClipRef.current.playbackType === 'extended'){
-                    //             setIsVideoPlaying(true);
-                    //         } else {
-                    //             setIsVideoMuted(false);
-                    //         }
-                    //         await currentClipRef.current.audio.stopAsync();
-                    //         currentClipRef.current = null;
-                    //     }
-                    // } else {
-                    //     prevTimestamp = status.positionMillis;
+                    // let currentClip;
+                    // if(currentInlineACRef && currentInlineACRef.current){
+                    //     currentClip = currentInlineACRef.current;
                     // }
+                    // else if(currentExtendedACRef && currentExtendedACRef.current){
+                    //     currentClip = currentExtendedACRef.current;
+                    //     console.log("Current Clip: ", currentClip);
+                    // }
+                    if(status.positionMillis >= status.durationMillis - 3){
+                        console.log("Finished Playing Manually");
+                        // if(currentClip){
+                            // await currentClip.stopAsync();
+                            if(currentExtendedACRef && currentExtendedACRef.current){
+                                setCurrExtendedAC(null);
+                                setIsVideoPlaying(true);
+                                // currentAudio.unload() // Unload current clip
+                                setCurrentExtACPaused(false);
+                            } else if(currentInlineACRef && currentInlineACRef.current) {
+                                setCurrInlineAC(null);
+                                setIsVideoMuted(false);
+                                // currentAudio.unload() // Unload current clip
+                            }
+                        // }
+                    }
 
                     // New Algo
                     if(currInlineAC){
@@ -939,7 +947,6 @@ export default function VideoScreen({ route }) {
 
                     // New Algo
                     if(currentInlineACRef && currentInlineACRef.current){
-                        console.log("Inside if currInlineAC");
                         setCurrInlineAC(null);
                         setIsVideoMuted(false);
                         // currentAudio.unload() // Unload current clip
