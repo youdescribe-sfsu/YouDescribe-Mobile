@@ -143,7 +143,11 @@ export default function VideoScreen({ route }) {
 
     useEffect(() => {
         clipStackRef.current = clipStack;
-        // console.log('New Clip Stack', clipStack);
+        console.log('New Clip Stack');
+        clipStack.forEach((clip) => {
+            console.log("Clip Sequence Number: ", clip.clip_sequence_number);
+            console.log("Clip Start Time: ", clip.clip_start_time);
+        });
     }, [clipStack]);
 
     const onVideoScreenMount = async () => {
@@ -680,7 +684,7 @@ export default function VideoScreen({ route }) {
                 if(timer){
                     clearInterval(timer);
                 }
-                updateClipStackData();
+                // updateClipStackData();
                 if(currExtendedAC){
                     await currExtendedAC.stopAsync();
                     setCurrExtendedAC(null);
@@ -1095,6 +1099,7 @@ export default function VideoScreen({ route }) {
         try {
             if(videoPlayerRef && videoPlayerRef.current){
                 const currentTime = await videoPlayerRef.current.getCurrentTime();
+                setPreviousYTTime(currentTime);
                 await videoPlayerRef.current.seekTo(currentTime + seconds);
             }
         } catch (error) {
@@ -1107,6 +1112,7 @@ export default function VideoScreen({ route }) {
         try {
             if(videoPlayerRef && videoPlayerRef.current){
                 const currentTime = await videoPlayerRef.current.getCurrentTime();
+                setPreviousYTTime(currentTime);
                 await videoPlayerRef.current.seekTo(currentTime - seconds);
             }
         } catch (error) {

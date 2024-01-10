@@ -13,6 +13,7 @@
     "@react-navigation/bottom-tabs": "^6.4.0",
     "@react-navigation/material-top-tabs": "^6.4.0",
     "@react-navigation/native-stack": "^6.9.1",
+    "@expo/ngrok": "4.1.0",
     "axios": "^1.1.2",
     "expo": "~47.0.14",
     "expo-auth-session": "~3.8.0",
