@@ -1165,7 +1165,7 @@ export default function VideoScreen({ route }) {
                 height={deviceWidth * 9 / 16} // Setting the height to 9/16th of the device's width as the video player's aspect ratio is 16:9
                 play={isVideoPlaying}
                 videoId={video.videoId}
-                mute={true} // Change from true to isVideoMuted
+                mute={isVideoMuted}
                 onChangeState={onVPStateChange}
             />
             <View style={{ height: remainingHeight }}>
@@ -1205,7 +1205,7 @@ export default function VideoScreen({ route }) {
                     audioDescriptions.length > 0 &&
                     <View style={styles.muteSwitchContainer}>
                         <Text style={{fontSize: 12, fontWeight: 'bold'}}>
-                            Mute video volume while incline clips are playing?
+                            Mute video volume while inline clips are playing?
                         </Text>
                         <Switch
                             trackColor={{false: '#767577', true: '#384488'}}
