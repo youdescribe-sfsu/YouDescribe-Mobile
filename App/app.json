@@ -21,7 +21,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "org.youdescribe.youdescribex",
-      "buildNumber": "16"
+      "buildNumber": "19"
     },
     "android": {
       "adaptiveIcon": {
