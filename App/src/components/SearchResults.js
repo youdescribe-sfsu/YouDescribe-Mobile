@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Text, View } from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
@@ -17,26 +18,48 @@ export default function SearchResults({stackNavigation}) {
     const [wishlistVideos, setWishlistVideos] = useState([]);
     const [nonDescribedVideos, setNonDescribedVideos] = useState([]);
     const DescribedSearchResultsComponent = () => {
+        if(describedVideos && describedVideos.length > 0){
+            return (
+                <VideoCardsList navigation={stackNavigation} videos={describedVideos} />
+            );
+        }
         return (
-            <VideoCardsList navigation={stackNavigation} videos={describedVideos} />
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Text>No Results</Text>
+            </View>
         );
     }
     const WishlistSearchResultsComponent = () => {
+        if(wishlistVideos && wishlistVideos.length > 0){
+            return (
+                <VideoCardsList navigation={stackNavigation} videos={wishlistVideos} buttons="upvote-describe"/>
+            );
+        }
         return (
-            <VideoCardsList navigation={stackNavigation} videos={wishlistVideos} buttons="upvote-describe"/>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Text>No Results</Text>
+            </View>
         );
     }
     const NonDescribedSearchResultsComponent = () => {
+        if(nonDescribedVideos && nonDescribedVideos.length > 0){
+            return (
+                <VideoCardsList navigation={stackNavigation} videos={nonDescribedVideos} buttons="upvote-describe"/>
+            );
+        }
         return (
-            <VideoCardsList navigation={stackNavigation} videos={nonDescribedVideos} buttons="upvote-describe"/>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Text>No Results</Text>
+            </View>
         );
     }
     const getVideos = async() => {
-        const describedVideos = await videosApi.getSearchedVideos(searchTerm);
+        const term = searchTerm.toUpperCase();
+        const describedVideos = await videosApi.getSearchedVideos(term);
         setDescribedVideos(describedVideos);
-        const wishlistVideos = await wishlistApi.getSearchedVideos(searchTerm);
+        const wishlistVideos = await wishlistApi.getSearchedVideos(term);
         setWishlistVideos(wishlistVideos);
-        const nonDescribedVideos = await videosApi.getSearchedVideosFromYoutube(searchTerm);
+        const nonDescribedVideos = await videosApi.getSearchedVideosFromYoutube(term);
         setNonDescribedVideos(nonDescribedVideos);
     }
 

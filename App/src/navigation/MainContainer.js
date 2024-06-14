@@ -76,7 +76,8 @@ export default function MainContainer({userInfo}) {
                 tabBarStyle: styles.tabBar,
                 tabBarLabelStyle: styles.label,
                 headerStyle: styles.header,
-                headerTitleStyle: styles.headerTitle
+                headerTitleStyle: styles.headerTitle,
+                animationEnabled: false
             })}>
 
             <Tab.Screen
@@ -84,7 +85,7 @@ export default function MainContainer({userInfo}) {
                 component={HomeScreenNavigator}
                 options={{ title: 'YouDescribe',
                            tabBarLabel: 'Home',
-                           tabBarAccessibilityLabel: 'Recent Videos. Tab 1 of 5',
+                           tabBarAccessibilityLabel: 'Recently Described Videos. Tab 1 of 5',
                            tabBarShowLabel: false
                         }}
             />
@@ -138,7 +139,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   label: {
-    fontSize: '9px',
+    fontSize: 9,
     fontWeight: '700'
   },
   tabBar: {

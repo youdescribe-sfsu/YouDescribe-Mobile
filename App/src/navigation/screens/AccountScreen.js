@@ -17,8 +17,8 @@ export default function AccountScreen({navigation}) {
   const updateUser = useUserUpdate();
   const [idToken, setIdToken] = useState(null);
 
-  const [request, response, promptAsync] = Google.useAuthRequest({
-    responseType: "id_token",
+  const [request, fullResult, promptAsync] = Google.useIdTokenAuthRequest({
+    // responseType: "id_token",
     expoClientId: expoClientId,
     iosClientId: iosClientId,
     androidClientId: androidClientId
@@ -75,43 +75,55 @@ export default function AccountScreen({navigation}) {
 
   const LogoutButton = () => {
     return(
-      <TouchableOpacity onPress={() => logoutUser(false)}>
+      <TouchableOpacity onPress={() => logoutUser(false)} accessibilityRole="button">
         <View style={styles.logoutBtn}>
-          <Ionicons name = 'log-out-outline' size = '28' color = '#db411a' />
+          <Ionicons name = 'log-out-outline' size = {28} color = '#db411a' />
           <Text style={styles.logoutBtnText}>Sign Out</Text>
         </View>
       </TouchableOpacity>
     );
   }
 
+  const openHelpAndSupport = () => {
+    navigation.navigate('Help And Support');
+  }
+
+  const openCredits = () => {
+    navigation.navigate('Credits');
+  }
+
+  const openContactUs = () => {
+    navigation.navigate('Contact Us');
+  }
+
   useEffect(() => {
-    if (response?.type === 'success') {
-      setIdToken(response.params.id_token);
+    if (fullResult?.type === 'success') {
+      setIdToken(fullResult.params.id_token);
       if(idToken){
         fetchUserInfo();
       }
     }
-  }, [response, idToken]);
+  }, [fullResult, idToken]);
 
   return(
     <View style={styles.container} >
       <UserInfo loginUser={loginUser} logoutUser={logoutUser}/>
       <View style={styles.accountOptions}>
-        <TouchableOpacity onPress={fetchUserInfo}>
+        <TouchableOpacity onPress={openHelpAndSupport} accessibilityRole="button">
           <View style={styles.accountOption}>
-            <Ionicons name = 'help-circle' size = '22' color = '#000' />
+            <Ionicons name = 'help-circle' size = {22} color = '#000' />
             <Text style={styles.accountOptionText}>Help And Support</Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => logoutUser(false)}>
+        <TouchableOpacity onPress={openCredits} accessibilityRole="button">
           <View style={styles.accountOption}>
-            <Ionicons name = 'people' size = '22' color = '#000' />
-            <Text style={styles.accountOptionText}>About Us</Text>
+            <Ionicons name = 'people' size = {22} color = '#000' />
+            <Text style={styles.accountOptionText}>Credits</Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => logoutUser(false)}>
+        <TouchableOpacity onPress={openContactUs} accessibilityRole="button">
           <View style={styles.accountOption}>
-            <Ionicons name = 'mail' size = '22' color = '#000' />
+            <Ionicons name = 'mail' size = {22} color = '#000' />
             <Text style={styles.accountOptionText}>Contact Us</Text>
           </View>
         </TouchableOpacity>

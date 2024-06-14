@@ -10,7 +10,7 @@ export default function DescribeButton() {
     }
 
     return (
-        <TouchableOpacity onPress={comingSoonAlert}>
+        <TouchableOpacity onPress={comingSoonAlert} accessibilityRole="button">
             <View style={styles.button}>
                 <Text style={styles.buttonText}>Describe</Text>
             </View>
@@ -31,6 +31,6 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#fff',
         fontWeight: 'bold',
-        fontSize: '12px'
+        fontSize: 12
     }
 });

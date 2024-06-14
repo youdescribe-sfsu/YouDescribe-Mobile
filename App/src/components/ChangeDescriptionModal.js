@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from "react-native";
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
-export default function ChangeDescriptionModal({ hideModal, describers, selectedAudioDescriptionId, setSelectedAudioDescriptionId }) {
+export default function ChangeDescriptionModal({ hideChangeDescriptionModal, describers, selectedAudioDescriptionId, setSelectedAudioDescriptionId }) {
 
     const describersArray = [];
     for(const key in describers){
@@ -13,7 +13,7 @@ export default function ChangeDescriptionModal({ hideModal, describers, selected
 
     const changeSelectedDescription = (adId) => {
         setSelectedAudioDescriptionId(adId);
-        hideModal();
+        hideChangeDescriptionModal();
     }
 
     const renderDescriberInfo = ({item}) => {
@@ -32,6 +32,7 @@ export default function ChangeDescriptionModal({ hideModal, describers, selected
                     changeSelectedDescription(item.descriptionId);
                 }}
                 accessibilityLabel={`Description by ${item.name}. Rated ${item.overall_rating_average} stars out of 5.`}
+                accessibilityHint={`Double tap to select this audio description.`}
             >
                 <Image
                     source={{uri: item.picture}}
@@ -114,7 +115,7 @@ const styles = StyleSheet.create({
     describerImage: {
         width: 60,
         height: 60,
-        borderRadius: '50%'
+        borderRadius: 30
     },
     describerName:{
         fontSize: 14,

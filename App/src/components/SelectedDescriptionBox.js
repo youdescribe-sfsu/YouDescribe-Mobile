@@ -3,9 +3,9 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import { getDescriptionActivity } from '../contexts/DescriptionActivityContext';
 
-export default function SelectedDescriptionBox(props) {
+export default function SelectedDescriptionBox({ user, showRateDescriptionModal }) {
     const isDescriptionActive = getDescriptionActivity();
-    let describer = props.user;
+    let describer = user;
     if(describer && isDescriptionActive){
         const rating = describer.overall_rating_average === undefined ? 0 : describer.overall_rating_average;
         const starColors = [];
@@ -18,7 +18,7 @@ export default function SelectedDescriptionBox(props) {
         }
         return (
             <View style={styles.container}>
-                <Text>Selected Description</Text>
+                {/* <Text>Selected Description</Text> */}
                 <View
                     style={styles.describerInfo}
                     accessible={true}
@@ -39,7 +39,11 @@ export default function SelectedDescriptionBox(props) {
                         </View>
                     </View>
                 </View>
-                <TouchableOpacity style={styles.buttonContainer}>
+                <TouchableOpacity
+                    // style={styles.buttonContainer}
+                    onPress={showRateDescriptionModal}
+                    accessibilityRole="button"
+                >
                     <View style={styles.button}>
                         <Text style={styles.buttonText}>Rate Description</Text>
                     </View>
@@ -55,25 +59,24 @@ export default function SelectedDescriptionBox(props) {
 const styles = StyleSheet.create({
     container: {
         display: 'flex',
-        borderWidth: 2,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
         marginHorizontal: 20,
-        marginBottom: 10,
-        padding: 10,
-        borderColor: '#c3b6b6'
+        marginBottom: 10
     },
     describerInfo: {
         display: 'flex',
         flexDirection: 'row',
         marginVertical: 5,
-        marginLeft: 15,
         alignItems: 'center'
     },
     nameRating: {
         display: 'flex',
         justifyContent: 'space-between',
-        marginLeft: 15,
-        paddingVertical: 14,
-        height: 75
+        marginLeft: 8,
+        paddingVertical: 10,
+        height: 60
     },
     rating: {
         display: 'flex',
@@ -82,20 +85,20 @@ const styles = StyleSheet.create({
         width: 120
     },
     describerImage: {
-        width: 60,
-        height: 60,
-        borderRadius: '50%'
+        width: 50,
+        height: 50,
+        borderRadius: 25
     },
     describerName:{
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: 'bold'
     },
     buttonContainer: {
         alignSelf: 'center'
     },
     button: {
-        width: 200,
-        height: 36,
+        width: 140,
+        height: 40,
         backgroundColor: '#384488',
         display: 'flex',
         justifyContent: 'center',
@@ -105,6 +108,6 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#fff',
         fontWeight: 'bold',
-        fontSize: '16px'
+        fontSize: 14
     }
 });

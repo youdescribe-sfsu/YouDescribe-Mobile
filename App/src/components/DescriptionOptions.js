@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 
 import { getDescriptionActivity, setDescriptionActivity } from '../contexts/DescriptionActivityContext';
 
-export default function DescriptionOptions({ multipleDescriptions, showModal }) {
+export default function DescriptionOptions({ numberOfDescriptions, showChangeDescriptionModal }) {
 
     const isDescriptionActive = getDescriptionActivity();
     const updateisDescriptionActive = setDescriptionActivity();
@@ -25,26 +25,45 @@ export default function DescriptionOptions({ multipleDescriptions, showModal }) 
     if(isDescriptionActive){
         return (
             <View style={styles.container}>
-                <Text>Other Description Options</Text>
-                <TouchableOpacity style={styles.button} onPress={toggleDescriptionActivity}>
-                    <Text style={styles.buttonText}>Turn Off Descriptions</Text>
-                </TouchableOpacity>
+                {/* <Text>Other Description Options</Text> */}
                 {
-                    multipleDescriptions && 
-                    <TouchableOpacity style={styles.button} onPress={showModal}>
+                    numberOfDescriptions > 0 &&
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={toggleDescriptionActivity}
+                        accessibilityRole="button"
+                    >
+                        <Text style={styles.buttonText}>Turn Off Descriptions</Text>
+                    </TouchableOpacity>
+                }
+                {
+                    numberOfDescriptions > 1 && 
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={showChangeDescriptionModal}
+                        accessibilityRole="button"
+                    >
                         <Text style={styles.buttonText}>Change Description</Text>
                     </TouchableOpacity>
                 }
-                <TouchableOpacity style={styles.button} onPress={comingSoonAlert}>
+                {/* <TouchableOpacity
+                    style={styles.button}
+                    onPress={comingSoonAlert}
+                    accessibilityRole="button"
+                >
                     <Text style={styles.buttonText}>Add Description</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </View>
         );
     } else {
         return (
             <View style={styles.container}>
-                <Text>Descriptions Off</Text>
-                <TouchableOpacity style={styles.button} onPress={toggleDescriptionActivity}>
+                {/* <Text>Descriptions Off</Text> */}
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={toggleDescriptionActivity}
+                    accessibilityRole="button"
+                >
                     <Text style={styles.buttonText}>Turn On Descriptions</Text>
                 </TouchableOpacity>
             </View>
@@ -55,12 +74,11 @@ export default function DescriptionOptions({ multipleDescriptions, showModal }) 
 const styles = StyleSheet.create({
     container: {
         display: 'flex',
-        marginHorizontal: 20,
-        marginVertical: 10
+        marginHorizontal: 20
     },
     button: {
-        width: 200,
-        height: 36,
+        width: 220,
+        height: 40,
         backgroundColor: '#384488',
         display: 'flex',
         justifyContent: 'center',
@@ -71,6 +89,6 @@ const styles = StyleSheet.create({
     buttonText: {
         color: '#fff',
         fontWeight: 'bold',
-        fontSize: '16px'
+        fontSize: 16
     }
 });

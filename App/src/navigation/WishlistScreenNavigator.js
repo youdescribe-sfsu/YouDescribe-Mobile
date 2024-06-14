@@ -24,7 +24,10 @@ export default function WishlistScreenNavigator({ navigation, route }) {
     }, [navigation, route]);
 
     return (
-        <Stack.Navigator initialRouteName={'Wishlist'}>
+        <Stack.Navigator
+            initialRouteName={'Wishlist'}
+            screenOptions={{ animation: 'none' }}
+        >
             <Stack.Screen 
                 name={'Wishlist'}
                 component={WishlistScreen}
@@ -36,7 +39,7 @@ export default function WishlistScreenNavigator({ navigation, route }) {
                 name={'Video'}
                 component={VideoScreen}
                 options={{
-                    title: 'Video Player',
+                    title: 'Video Player with Audio Descriptions',
                     headerBackTitle: 'Wishlist'
                 }}
             />

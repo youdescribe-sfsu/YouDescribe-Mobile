@@ -27,6 +27,13 @@ export default function MyDescriptionsScreen({navigation}) {
       </View>
     );
   }
+  if(!videos || videos.length === 0){
+    return(
+      <View style={styles.container}>
+        <Text>You don't have any audio descriptions.</Text>
+      </View>
+    );
+  }
   return (
     <VideoCardsList videos={videos} buttons= "edit" navigation={navigation}></VideoCardsList>
   );

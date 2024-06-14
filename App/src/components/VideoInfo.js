@@ -11,8 +11,14 @@ export default function VideoInfo(props) {
                 <Text accessibilityLabel={`Published on ${props.video.publishedAt}`}>{props.video.publishedAt}</Text>
             </View>
             <View style={styles.viewsLikes}>
-                <Text><FontAwesome5 name = 'eye' size = {14} /> {props.video.views}</Text>
-                <Text accessibilityLabel={`${props.video.likes} likes`}><FontAwesome5 name = 'thumbs-up' size = {14} /> {props.video.likes}</Text>
+                {
+                    props.video.views !== 'undefined' &&
+                    <Text><FontAwesome5 name = 'eye' size = {14} /> {props.video.views}</Text>
+                }
+                {
+                    props.video.likes !== 'undefined' &&
+                    <Text accessibilityLabel={`${props.video.likes} likes`} ><FontAwesome5 name = 'thumbs-up' size = {14} /> {props.video.likes}</Text>
+                }
             </View>
         </View>
     );
@@ -26,24 +32,24 @@ const styles = StyleSheet.create({
     },
     videoTitle: {
         fontWeight: 'bold',
-        fontSize: 18,
-        marginVertical: 6
+        fontSize: 14,
+        marginVertical: 3
     },
     channelDate: {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingVertical: 10,
+        paddingVertical: 5,
         borderBottomWidth: 1,
         borderBottomColor: '#c3b6b6'
     },
     channelName: {
-        fontWeight: '600'
+        fontWeight: '400'
     },
     viewsLikes: {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingVertical: 10
+        paddingVertical: 5
     }
 });

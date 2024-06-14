@@ -24,7 +24,10 @@ export default function MyDescriptionsScreenNavigator({ navigation, route }) {
     }, [navigation, route]);
 
     return (
-        <Stack.Navigator initialRouteName={'My Descriptions'}>
+        <Stack.Navigator
+            initialRouteName={'My Descriptions'}
+            screenOptions={{ animation: 'none' }}
+        >
             <Stack.Screen 
                 name={'My Descriptions'}
                 component={MyDescriptionsScreen}
@@ -36,7 +39,7 @@ export default function MyDescriptionsScreenNavigator({ navigation, route }) {
                 name={'Video'}
                 component={VideoScreen}
                 options={{
-                    title: 'Video Player',
+                    title: 'Video Player with Audio Descriptions',
                     headerBackTitle: 'My Descriptions'
                 }}
             />

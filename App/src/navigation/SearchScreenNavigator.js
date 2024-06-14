@@ -24,7 +24,10 @@ export default function SearchScreenNavigator({ navigation, route }) {
     }, [navigation, route]);
 
     return (
-        <Stack.Navigator initialRouteName={'Search'}>
+        <Stack.Navigator
+            initialRouteName={'Search'}
+            screenOptions={{ animation: 'none' }}
+        >
             <Stack.Screen 
                 name={'Search'}
                 component={SearchScreen}
@@ -36,7 +39,7 @@ export default function SearchScreenNavigator({ navigation, route }) {
                 name={'Video'}
                 component={VideoScreen}
                 options={{
-                    title: 'Video Player',
+                    title: 'Video Player with Audio Descriptions',
                     headerBackTitle: 'YouDescribe'
                 }}
             />
